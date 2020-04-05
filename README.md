@@ -3,6 +3,9 @@
 [Verdaccio](http://www.verdaccio.org) is a lightweight private
 [NPM](https://www.npmjs.com) proxy registry.
 
+> ⚠️ This repo is in construction [more info here](https://github.com/verdaccio/verdaccio/issues/1767).
+
+
 ## TL;DR;
 
 ```
