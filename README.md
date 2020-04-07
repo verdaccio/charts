@@ -8,7 +8,7 @@
 ## TL;DR;
 
 ```
-$ helm repo add renovate https://verdaccop.github.io/charts/
+$ helm repo add verdaccio https://verdaccio.github.io/charts/
 $ helm repo update
 $ helm install verdaccio/verdaccio
 ```
