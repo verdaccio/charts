@@ -5,11 +5,12 @@
 
 > ⚠️ This repo is in construction [more info here](https://github.com/verdaccio/verdaccio/issues/1767).
 
-
 ## TL;DR;
 
 ```
-$ helm install stable/verdaccio
+$ helm repo add renovate https://verdaccop.github.io/charts/
+$ helm repo update
+$ helm install verdaccio/verdaccio
 ```
 
 ## Introduction
@@ -28,7 +29,7 @@ deployment on a [Kubernetes](http://kubernetes.io) cluster using the
 To install the chart with the release name `my-release`:
 
 ```
-$ helm install --name my-release stable/verdaccio
+$ helm install --name my-release verdaccio/verdaccio
 ```
 
 The command deploys Verdaccio on the Kubernetes cluster in the default
@@ -53,40 +54,40 @@ deletes the release.
 The following table lists the configurable parameters of the Verdaccio chart
 and their default values.
 
-| Parameter                          | Description                                                     | Default                                                  |
-| ---------------------------------- | --------------------------------------------------------------- | -------------------------------------------------------- |
-| `customConfigMap`                  | Use a custom ConfigMap                                          | `false`                                                  |
-| `image.pullPolicy`                 | Image pull policy                                               | `IfNotPresent`                                           |
-| `image.repository`                 | Verdaccio container image repository                            | `verdaccio/verdaccio`                                    |
-| `image.tag`                        | Verdaccio container image tag                                   | `3.11.6`                                                 |
-| `nodeSelector`                     | Node labels for pod assignment                                  | `{}`                                                     |
-| `tolerations`                      | List of node taints to tolerate                                 | `[]`                                                     |
-| `persistence.accessMode`           | PVC Access Mode for Verdaccio volume                            | `ReadWriteOnce`                                          |
-| `persistence.enabled`              | Enable persistence using PVC                                    | `true`                                                   |
-| `persistence.existingClaim`        | Use existing PVC                                                | `nil`                                                    |
-| `persistence.mounts`               | Additional mounts                                               | `nil`                                                    |
-| `persistence.size`                 | PVC Storage Request for Verdaccio volume                        | `8Gi`                                                    |
-| `persistence.storageClass`         | PVC Storage Class for Verdaccio volume                          | `nil`                                                    |
-| `persistence.volumes`              | Additional volumes                                              | `nil`                                                    |
-| `podAnnotations`                   | Annotations to add to each pod                                  | `{}`                                                     |
-| `replicaCount`                     | Desired number of pods                                          | `1`                                                      |
-| `resources`                        | CPU/Memory resource requests/limits                             | `{}`                                                     |
-| `resources`                        | pod resource requests & limits                                  | `{}`                                                     |
-| `service.annotations`              | Annotations to add to service                                   | none                                                     |
-| `service.clusterIP`                | IP address to assign to service                                 | `""`                                                     |
-| `service.externalIPs`              | Service external IP addresses                                   | `[]`                                                     |
-| `service.loadBalancerIP`           | IP address to assign to load balancer (if supported)            | `""`                                                     |
-| `service.loadBalancerSourceRanges` | List of IP CIDRs allowed access to load balancer (if supported) | `[]`                                                     |
-| `service.port`                     | Service port to expose                                          | `4873`                                                   |
-| `service.nodePort`                 | Service port to expose                                          | none                                                     |
-| `service.type`                     | Type of service to create                                       | `ClusterIP`                                              |
+| Parameter                          | Description                                                     | Default               |
+| ---------------------------------- | --------------------------------------------------------------- | --------------------- |
+| `customConfigMap`                  | Use a custom ConfigMap                                          | `false`               |
+| `image.pullPolicy`                 | Image pull policy                                               | `IfNotPresent`        |
+| `image.repository`                 | Verdaccio container image repository                            | `verdaccio/verdaccio` |
+| `image.tag`                        | Verdaccio container image tag                                   | `3.11.6`              |
+| `nodeSelector`                     | Node labels for pod assignment                                  | `{}`                  |
+| `tolerations`                      | List of node taints to tolerate                                 | `[]`                  |
+| `persistence.accessMode`           | PVC Access Mode for Verdaccio volume                            | `ReadWriteOnce`       |
+| `persistence.enabled`              | Enable persistence using PVC                                    | `true`                |
+| `persistence.existingClaim`        | Use existing PVC                                                | `nil`                 |
+| `persistence.mounts`               | Additional mounts                                               | `nil`                 |
+| `persistence.size`                 | PVC Storage Request for Verdaccio volume                        | `8Gi`                 |
+| `persistence.storageClass`         | PVC Storage Class for Verdaccio volume                          | `nil`                 |
+| `persistence.volumes`              | Additional volumes                                              | `nil`                 |
+| `podAnnotations`                   | Annotations to add to each pod                                  | `{}`                  |
+| `replicaCount`                     | Desired number of pods                                          | `1`                   |
+| `resources`                        | CPU/Memory resource requests/limits                             | `{}`                  |
+| `resources`                        | pod resource requests & limits                                  | `{}`                  |
+| `service.annotations`              | Annotations to add to service                                   | none                  |
+| `service.clusterIP`                | IP address to assign to service                                 | `""`                  |
+| `service.externalIPs`              | Service external IP addresses                                   | `[]`                  |
+| `service.loadBalancerIP`           | IP address to assign to load balancer (if supported)            | `""`                  |
+| `service.loadBalancerSourceRanges` | List of IP CIDRs allowed access to load balancer (if supported) | `[]`                  |
+| `service.port`                     | Service port to expose                                          | `4873`                |
+| `service.nodePort`                 | Service port to expose                                          | none                  |
+| `service.type`                     | Type of service to create                                       | `ClusterIP`           |
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 
 ```
 $ helm install --name my-release \
   --set service.type=LoadBalancer \
-    stable/verdaccio
+    verdaccio/verdaccio
 ```
 
 The above command sets the service type LoadBalancer.
@@ -95,7 +96,7 @@ Alternatively, a YAML file that specifies the values for the above parameters
 can be provided while installing the chart. For example,
 
 ```
-$ helm install --name my-release -f values.yaml stable/verdaccio
+$ helm install --name my-release -f values.yaml verdaccio/verdaccio
 ```
 
 > **Tip**: You can use the default [values.yaml](values.yaml)
@@ -128,5 +129,5 @@ It is possible to mount several volumes using `Persistence.volumes` and
 ```bash
 $ helm install --name my-release \
     --set persistence.existingClaim=PVC_NAME \
-    stable/verdaccio
+    verdaccio/verdaccio
 ```
