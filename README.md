@@ -1,6 +1,6 @@
 # Verdaccio
 
-[Verdaccio](http://www.verdaccio.org) is a lightweight private
+[Verdaccio](https://www.verdaccio.org) is a lightweight private
 [NPM](https://www.npmjs.com) proxy registry.
 
 > ⚠️ This repo is in construction [more info here](https://github.com/verdaccio/verdaccio/issues/1767).
@@ -8,7 +8,7 @@
 ## TL;DR;
 
 ```
-$ helm repo add verdaccio https://verdaccio.github.io/charts/
+$ helm repo add verdaccio https://charts.verdaccio.org
 $ helm repo update
 $ helm install verdaccio/verdaccio
 ```
@@ -16,7 +16,7 @@ $ helm install verdaccio/verdaccio
 ## Introduction
 
 This chart bootstraps a [Verdaccio](https://github.com/verdaccio/verdaccio)
-deployment on a [Kubernetes](http://kubernetes.io) cluster using the
+deployment on a [Kubernetes](https://kubernetes.io) cluster using the
 [Helm](https://helm.sh) package manager.
 
 ## Prerequisites
