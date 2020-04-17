@@ -48,6 +48,11 @@ ingress:
 #     hosts:
 #       - npm.blah.com
 
+## Service account
+serviceAccount:
+  enabled: false
+  # name:
+
 configMap: |
   # This is the config file used for the docker images.
   # It allows all users to do anything, so don't use it on production systems.
