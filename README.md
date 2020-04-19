@@ -3,8 +3,6 @@
 [Verdaccio](https://www.verdaccio.org) is a lightweight private
 [NPM](https://www.npmjs.com) proxy registry.
 
-> ⚠️ This repo is in construction [more info here](https://github.com/verdaccio/verdaccio/issues/1767).
-
 ## TL;DR;
 
 ```
@@ -26,10 +24,28 @@ deployment on a [Kubernetes](https://kubernetes.io) cluster using the
 
 ## Installing the Chart
 
-To install the chart with the release name `my-release`:
+### Add repository
 
 ```
-$ helm install --name my-release verdaccio/verdaccio
+helm repo add verdaccio https://charts.verdaccio.org
+```
+
+In this example we use `npm` as release name:
+
+```bash
+helm install --name npm verdaccio/verdaccio
+```
+
+### Deploy a specific version
+
+```bash
+helm install --name npm --set image.tag=3.13.1 verdaccio/verdaccio
+```
+
+### Upgrading Verdaccio
+
+```bash
+helm upgrade npm verdaccio/verdaccio
 ```
 
 The command deploys Verdaccio on the Kubernetes cluster in the default
@@ -40,10 +56,10 @@ that can be configured during installation.
 
 ## Uninstalling the Chart
 
-To uninstall/delete the `my-release` deployment:
+To uninstall/delete the `npm` deployment:
 
 ```
-$ helm delete my-release
+$ helm delete npm
 ```
 
 The command removes all the Kubernetes components associated with the chart and
@@ -99,7 +115,7 @@ Alternatively, a YAML file that specifies the values for the above parameters
 can be provided while installing the chart. For example,
 
 ```
-$ helm install --name my-release -f values.yaml verdaccio/verdaccio
+$ helm install --name npm -f values.yaml verdaccio/verdaccio
 ```
 
 > **Tip**: You can use the default [values.yaml](values.yaml)
@@ -130,7 +146,7 @@ It is possible to mount several volumes using `Persistence.volumes` and
 1. Install the chart
 
 ```bash
-$ helm install --name my-release \
+$ helm install --name npm \
     --set persistence.existingClaim=PVC_NAME \
     verdaccio/verdaccio
 ```
