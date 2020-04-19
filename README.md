@@ -11,6 +11,8 @@ $ helm repo update
 $ helm install verdaccio/verdaccio
 ```
 
+> ⚠️ If you are using **stable/verdaccio** chart, [be aware is deprecated](https://github.com/helm/charts/pull/21929), forward all new PR and or issues to this repository.
+
 ## Introduction
 
 This chart bootstraps a [Verdaccio](https://github.com/verdaccio/verdaccio)
