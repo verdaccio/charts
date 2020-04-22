@@ -88,6 +88,8 @@ and their default values.
 | `persistence.storageClass`         | PVC Storage Class for Verdaccio volume                          | `nil`                 |
 | `persistence.volumes`              | Additional volumes                                              | `nil`                 |
 | `podAnnotations`                   | Annotations to add to each pod                                  | `{}`                  |
+| `priorityClass.enabled`            | Enable specifying pod priorityClassName                         | `false`               |
+| `priorityClass.name`               | PriorityClassName to be specified in pod spec                   | `""`                  |
 | `replicaCount`                     | Desired number of pods                                          | `1`                   |
 | `resources`                        | CPU/Memory resource requests/limits                             | `{}`                  |
 | `resources`                        | pod resource requests & limits                                  | `{}`                  |
