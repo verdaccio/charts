@@ -147,3 +147,7 @@ securityContext:
   enabled: true
   runAsUser: 100
   fsGroup: 101
+
+priorityClass:
+  enabled: false
+  # name: ""
