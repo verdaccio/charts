@@ -76,7 +76,7 @@ spec:
       volumes:
       - name: config
         configMap:
-          name: {{ .Values.customConfigMap | default (include "verdaccio.fullname" .) }}
+          name: {{ .Values.existingConfigMap | default (include "verdaccio.fullname" .) }}
 {{- if .Values.persistence.volumes }}
 {{ toYaml .Values.persistence.volumes | indent 6 }}
 {{- end }}
