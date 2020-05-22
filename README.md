@@ -74,7 +74,7 @@ and their default values.
 
 | Parameter                          | Description                                                     | Default               |
 | ---------------------------------- | --------------------------------------------------------------- | --------------------- |
-| `customConfigMap`                  | Use a custom ConfigMap                                          | `false`               |
+| `existingConfigMap`                | Name of custom ConfigMap to use                                 | `false`               |
 | `image.pullPolicy`                 | Image pull policy                                               | `IfNotPresent`        |
 | `image.repository`                 | Verdaccio container image repository                            | `verdaccio/verdaccio` |
 | `image.tag`                        | Verdaccio container image tag                                   | `3.11.6`              |
