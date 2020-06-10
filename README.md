@@ -41,7 +41,7 @@ helm install --name npm verdaccio/verdaccio
 ### Deploy a specific version
 
 ```bash
-helm install --name npm --set image.tag=3.13.1 verdaccio/verdaccio
+helm install --name npm --set image.tag=4.6.2 verdaccio/verdaccio
 ```
 
 ### Upgrading Verdaccio
@@ -77,7 +77,7 @@ and their default values.
 | `existingConfigMap`                | Name of custom ConfigMap to use                                 | `false`               |
 | `image.pullPolicy`                 | Image pull policy                                               | `IfNotPresent`        |
 | `image.repository`                 | Verdaccio container image repository                            | `verdaccio/verdaccio` |
-| `image.tag`                        | Verdaccio container image tag                                   | `3.11.6`              |
+| `image.tag`                        | Verdaccio container image tag                                   | `4.6.2`               |
 | `nodeSelector`                     | Node labels for pod assignment                                  | `{}`                  |
 | `tolerations`                      | List of node taints to tolerate                                 | `[]`                  |
 | `persistence.accessMode`           | PVC Access Mode for Verdaccio volume                            | `ReadWriteOnce`       |
