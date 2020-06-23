@@ -39,12 +39,12 @@ resources: {}
 
 ingress:
   enabled: false
-  # If your Ingress controller can not parse a / and a /* path, set this to true
-  disableSecondPath: false
   # Set to true if you are on an old cluster where apiVersion extensions/v1beta1 is required
   v1beta1: false
 # hosts:
 #   - npm.blah.com
+# paths:
+#   - "/"
 # annotations:
 #   kubernetes.io/ingress.class: nginx
 # tls:
