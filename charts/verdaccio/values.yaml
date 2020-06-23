@@ -40,7 +40,7 @@ resources: {}
 ingress:
   enabled: false
   # Set to true if you are on an old cluster where apiVersion extensions/v1beta1 is required
-  v1beta1: false
+  useExtensionsApi: false
   paths:
     - /
 # hosts:
