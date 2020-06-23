@@ -41,10 +41,10 @@ ingress:
   enabled: false
   # Set to true if you are on an old cluster where apiVersion extensions/v1beta1 is required
   v1beta1: false
+  paths:
+    - /
 # hosts:
 #   - npm.blah.com
-# paths:
-#   - "/"
 # annotations:
 #   kubernetes.io/ingress.class: nginx
 # tls:
