@@ -24,10 +24,12 @@ spec:
             backend:
               serviceName: {{ $serviceName }}
               servicePort: {{ $servicePort }}
+          {{- if (not .Values.ingress.disableSecondPath) }}
           - path: /*
             backend:
               serviceName: {{ $serviceName }}
               servicePort: {{ $servicePort }}
+          {{- end -}}
     {{- end -}}
   {{- if .Values.ingress.tls }}
   tls:

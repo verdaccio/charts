@@ -39,6 +39,8 @@ resources: {}
 
 ingress:
   enabled: false
+  # If your Ingress controller can not parse a / and a /* path, set this to true
+  disableSecondPath: false
 # hosts:
 #   - npm.blah.com
 # annotations:
