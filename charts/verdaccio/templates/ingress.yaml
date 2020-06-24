@@ -1,7 +1,12 @@
 {{- if .Values.ingress.enabled }}
 {{- $serviceName := include "verdaccio.fullname" . -}}
 {{- $servicePort := .Values.service.port -}}
+{{- $paths := .Values.ingress.paths -}}
+{{- if .Values.ingress.useExtensionsApi }}
 apiVersion: extensions/v1beta1
+{{- else }}
+apiVersion: networking.k8s.io/v1beta1
+{{- end }}
 kind: Ingress
 metadata:
   name: {{ template "verdaccio.fullname" . }}
@@ -16,18 +21,27 @@ metadata:
     {{- end }}
 spec:
   rules:
+    {{- if .Values.ingress.hosts }}
     {{- range $host := .Values.ingress.hosts }}
     - host: {{ $host }}
       http:
         paths:
-          - path: /
+          {{- range $p := $paths }}
+          - path: {{ $p }}
             backend:
               serviceName: {{ $serviceName }}
               servicePort: {{ $servicePort }}
-          - path: /*
+          {{- end -}}
+    {{- end -}}
+    {{- else }}
+    - http:
+        paths:
+    {{- range $p := $paths }}
+          - path: {{ $p }}
             backend:
               serviceName: {{ $serviceName }}
               servicePort: {{ $servicePort }}
+    {{- end -}}
     {{- end -}}
   {{- if .Values.ingress.tls }}
   tls:

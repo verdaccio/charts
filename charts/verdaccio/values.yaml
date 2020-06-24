@@ -39,6 +39,10 @@ resources: {}
 
 ingress:
   enabled: false
+  # Set to true if you are on an old cluster where apiVersion extensions/v1beta1 is required
+  useExtensionsApi: false
+  paths:
+    - /
 # hosts:
 #   - npm.blah.com
 # annotations:
