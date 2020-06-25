@@ -159,7 +159,7 @@ persistence:
 
 securityContext:
   enabled: true
-  runAsUser: 100
+  runAsUser: 10001
   fsGroup: 101
 
 priorityClass:
