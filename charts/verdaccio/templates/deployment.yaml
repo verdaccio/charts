@@ -8,9 +8,6 @@ metadata:
     release: {{ .Release.Name }}
   name: {{ template "verdaccio.fullname" . }}
 spec:
-  {{- if .Values.serviceAccount.enabled }}
-  serviceAccountName: {{ template ".Values.serviceAccount.name" . }}
-  {{- end}}
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
@@ -34,6 +31,9 @@ spec:
         app: {{ template "verdaccio.name" . }}
         release: {{ .Release.Name }}
     spec:
+      {{- if .Values.serviceAccount.enabled }}
+      serviceAccountName: {{ include "verdaccio.serviceAccountName" . }}
+      {{- end}}
       containers:
         - name: {{ template "verdaccio.name" . }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
