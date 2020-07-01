@@ -2,6 +2,8 @@ image:
   repository: verdaccio/verdaccio
   tag: 4.6.2
   pullPolicy: IfNotPresent
+  pullSecrets:
+    # name: dockerhub-secret
 
 service:
   annotations: {}

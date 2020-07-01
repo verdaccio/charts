@@ -67,6 +67,10 @@ spec:
 {{- if .Values.extraEnvVars }}
 {{ toYaml .Values.extraEnvVars | indent 12 }}
 {{- end }}
+      {{- if .Values.image.pullSecrets }}
+      imagePullSecrets:
+{{ toYaml .Values.image.pullSecrets | indent 8 }}
+      {{- end }}
       {{- if .Values.securityContext.enabled }}
       # Allow non-root user to access PersistentVolume
       securityContext:

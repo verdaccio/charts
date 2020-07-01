@@ -76,6 +76,7 @@ and their default values.
 | ---------------------------------- | --------------------------------------------------------------- | --------------------- |
 | `existingConfigMap`                | Name of custom ConfigMap to use                                 | `false`               |
 | `image.pullPolicy`                 | Image pull policy                                               | `IfNotPresent`        |
+| `image.pullSecrets`                | Image pull secrets                                              | `[]`                  |
 | `image.repository`                 | Verdaccio container image repository                            | `verdaccio/verdaccio` |
 | `image.tag`                        | Verdaccio container image tag                                   | `4.6.2`               |
 | `nodeSelector`                     | Node labels for pod assignment                                  | `{}`                  |
