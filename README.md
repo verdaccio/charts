@@ -93,7 +93,6 @@ and their default values.
 | `priorityClass.name`               | PriorityClassName to be specified in pod spec                   | `""`                  |
 | `replicaCount`                     | Desired number of pods                                          | `1`                   |
 | `resources`                        | CPU/Memory resource requests/limits                             | `{}`                  |
-| `resources`                        | pod resource requests & limits                                  | `{}`                  |
 | `service.annotations`              | Annotations to add to service                                   | none                  |
 | `service.clusterIP`                | IP address to assign to service                                 | `""`                  |
 | `service.externalIPs`              | Service external IP addresses                                   | `[]`                  |
