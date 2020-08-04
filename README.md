@@ -122,7 +122,7 @@ can be provided while installing the chart. For example,
 $ helm install --name npm -f values.yaml verdaccio/verdaccio
 ```
 
-> **Tip**: You can use the default [values.yaml](values.yaml)
+> **Tip**: You can use the default [values.yaml](charts/verdaccio/values.yaml)
 
 ### Custom ConfigMap
 
