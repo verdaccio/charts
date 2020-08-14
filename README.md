@@ -35,13 +35,19 @@ helm repo add verdaccio https://charts.verdaccio.org
 In this example we use `npm` as release name:
 
 ```bash
+helm install npm verdaccio/verdaccio
+```
+
+If you are using **Helm v2 or older version**, you should use `name` flag to assign release name:
+
+```bash
 helm install --name npm verdaccio/verdaccio
 ```
 
 ### Deploy a specific version
 
 ```bash
-helm install --name npm --set image.tag=4.6.2 verdaccio/verdaccio
+helm install npm --set image.tag=4.6.2 verdaccio/verdaccio
 ```
 
 ### Upgrading Verdaccio
@@ -108,7 +114,7 @@ and their default values.
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 
 ```
-$ helm install --name my-release \
+$ helm install my-release \
   --set service.type=LoadBalancer \
     verdaccio/verdaccio
 ```
@@ -119,10 +125,10 @@ Alternatively, a YAML file that specifies the values for the above parameters
 can be provided while installing the chart. For example,
 
 ```
-$ helm install --name npm -f values.yaml verdaccio/verdaccio
+$ helm install npm -f values.yaml verdaccio/verdaccio
 ```
 
-> **Tip**: You can use the default [values.yaml](charts/verdaccio/values.yaml)
+> **Tip**: You can use the default [values.yaml](values.yaml)
 
 ### Custom ConfigMap
 
@@ -150,7 +156,7 @@ It is possible to mount several volumes using `Persistence.volumes` and
 1. Install the chart
 
 ```bash
-$ helm install --name npm \
+$ helm install npm \
     --set persistence.existingClaim=PVC_NAME \
     verdaccio/verdaccio
 ```
