@@ -32,7 +32,11 @@ deployment on a [Kubernetes](https://kubernetes.io) cluster using the
 helm repo add verdaccio https://charts.verdaccio.org
 ```
 
-In this example we use `npm` as release name:
+### Install Verdaccio chart
+
+In this example we use `npm` as release name.
+
+For **Helm v3**:
 
 ```bash
 helm install npm verdaccio/verdaccio
