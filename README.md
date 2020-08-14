@@ -32,15 +32,25 @@ deployment on a [Kubernetes](https://kubernetes.io) cluster using the
 helm repo add verdaccio https://charts.verdaccio.org
 ```
 
+### Install Verdaccio chart
+
 In this example we use `npm` as release name:
 
 ```bash
+# Helm v3+
+helm install npm verdaccio/verdaccio
+
+# Helm v2 or older
 helm install --name npm verdaccio/verdaccio
 ```
 
 ### Deploy a specific version
 
 ```bash
+# Helm v3+
+helm install npm --set image.tag=4.6.2 verdaccio/verdaccio
+
+# Helm v2 or older
 helm install --name npm --set image.tag=4.6.2 verdaccio/verdaccio
 ```
 
@@ -107,7 +117,13 @@ and their default values.
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 
-```
+```bash
+# Helm v3+
+$ helm install my-release \
+  --set service.type=LoadBalancer \
+    verdaccio/verdaccio
+
+# Helm v2 or older
 $ helm install --name my-release \
   --set service.type=LoadBalancer \
     verdaccio/verdaccio
@@ -118,7 +134,11 @@ The above command sets the service type LoadBalancer.
 Alternatively, a YAML file that specifies the values for the above parameters
 can be provided while installing the chart. For example,
 
-```
+```bash
+# Helm v3+
+$ helm install npm -f values.yaml verdaccio/verdaccio
+
+# Helm v2 or older
 $ helm install --name npm -f values.yaml verdaccio/verdaccio
 ```
 
@@ -150,6 +170,12 @@ It is possible to mount several volumes using `Persistence.volumes` and
 1. Install the chart
 
 ```bash
+# Helm v3+
+$ helm install npm \
+    --set persistence.existingClaim=PVC_NAME \
+    verdaccio/verdaccio
+
+# Helm v2 or older
 $ helm install --name npm \
     --set persistence.existingClaim=PVC_NAME \
     verdaccio/verdaccio
