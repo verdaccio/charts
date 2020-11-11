@@ -70,8 +70,12 @@ that can be configured during installation.
 
 To uninstall/delete the `npm` deployment:
 
-```
-$ helm delete npm
+```bash
+# Helm v3+
+helm uninstall npm
+
+# Helm v2 or older
+helm delete npm
 ```
 
 The command removes all the Kubernetes components associated with the chart and
