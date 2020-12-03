@@ -53,6 +53,7 @@ ingress:
 # annotations:
 #   kubernetes.io/ingress.class: nginx
 # tls:
+
 #   - secretName: secret
 #     hosts:
 #       - npm.blah.com
