@@ -70,10 +70,10 @@ ingress:
 # annotations:
 #   kubernetes.io/ingress.class: nginx
 # tls:
-
 #   - secretName: secret
 #     hosts:
 #       - npm.blah.com
+
 ## Service account
 serviceAccount:
   # Specifies whether a service account should be created
