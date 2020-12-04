@@ -2,6 +2,7 @@
 {{- $serviceName := include "verdaccio.fullname" . -}}
 {{- $servicePort := .Values.service.port -}}
 {{- $paths := .Values.ingress.paths -}}
+{{- $ingressExtraPaths := .Values.ingress.extraPaths -}}
 {{- if .Values.ingress.useExtensionsApi }}
 apiVersion: extensions/v1beta1
 {{- else }}
@@ -26,6 +27,12 @@ spec:
     - host: {{ $host }}
       http:
         paths:
+          {{- range $ingressExtraPaths }}
+          - path: {{ default "/" .path | quote }}
+            backend:
+              serviceName: {{ default $serviceName .service }}
+              servicePort: {{ default $servicePort .port }}
+          {{- end }}
           {{- range $p := $paths }}
           - path: {{ $p }}
             backend:
