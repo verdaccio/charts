@@ -3,6 +3,28 @@ entries:
   verdaccio:
   - apiVersion: v1
     appVersion: 4.7.2
+    created: "2020-12-04T15:49:44.21529962Z"
+    description: A lightweight private npm proxy registry (sinopia fork)
+    digest: 5e40cf2ba653a55e8c6c60f8e6a19f088cd63a62d8addc0af79ff64a1d918b00
+    home: https://verdaccio.org
+    icon: https://cdn.verdaccio.dev/logos/default.png
+    keywords:
+    - npm
+    - nodejs
+    maintainers:
+    - email: juanpicado19@gmail.com
+      name: juanpicado
+    - email: jhon.msdev@gmail.com
+      name: Jhon Mike
+    name: verdaccio
+    sources:
+    - https://verdaccio.org
+    - https://github.com/verdaccio/verdaccio
+    urls:
+    - https://github.com/verdaccio/charts/releases/download/verdaccio-0.16.3/verdaccio-0.16.3.tgz
+    version: 0.16.3
+  - apiVersion: v1
+    appVersion: 4.7.2
     created: "2020-07-01T18:41:51.552890992Z"
     description: A lightweight private npm proxy registry (sinopia fork)
     digest: 1dc216d5a2227fd5191fa6657b1500af1d753c366862a249d8343d3885f821c8
