@@ -3,5 +3,5 @@ remote: origin
 chart-dirs:
   - charts
 chart-repos:
-  - verdaccio=https://charts.verdaccio.org
+  - verdaccio=https://charts.verdaccio.org/index.yaml
 helm-extra-args: --timeout 600s
