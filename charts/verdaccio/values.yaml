@@ -31,7 +31,8 @@ tolerations: []
 podAnnotations: {}
 replicaCount: 1
 
-resources: {}
+resources:
+  {}
   # limits:
   #  cpu: 100m
   #  memory: 512Mi
@@ -78,7 +79,7 @@ extraEnvVars:
 #    value: ABC
 
 configMap: |
-  # This is the config file used for the docker images.
+  # This is the config file used for the docker images. (example)
   # It allows all users to do anything, so don't use it on production systems.
   #
   # Do not configure host and port under `listen` in this file
@@ -160,8 +161,8 @@ persistence:
   accessMode: ReadWriteOnce
   size: 8Gi
   volumes:
-#  - name: nothing
-#    emptyDir: {}
+  #  - name: nothing
+  #    emptyDir: {}
   mounts:
 #  - mountPath: /var/nothing
 #    name: nothing
