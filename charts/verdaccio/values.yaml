@@ -31,7 +31,8 @@ tolerations: []
 podAnnotations: {}
 replicaCount: 1
 
-resources: {}
+resources:
+  {}
   # limits:
   #  cpu: 100m
   #  memory: 512Mi
@@ -160,8 +161,8 @@ persistence:
   accessMode: ReadWriteOnce
   size: 8Gi
   volumes:
-#  - name: nothing
-#    emptyDir: {}
+  #  - name: nothing
+  #    emptyDir: {}
   mounts:
 #  - mountPath: /var/nothing
 #    name: nothing
