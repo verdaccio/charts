@@ -34,9 +34,7 @@ spec:
         {{- include "tplvalues.render" (dict "value" .Values.podLabels "context" $) | nindent 8 }}
         {{- end }}        
     spec:
-      {{- if .Values.serviceAccount.enabled }}
       serviceAccountName: {{ include "verdaccio.serviceAccountName" . }}
-      {{- end}}
       containers:
         - name: {{ template "verdaccio.name" . }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
