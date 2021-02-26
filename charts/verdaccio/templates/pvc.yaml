@@ -21,4 +21,8 @@ spec:
   storageClassName: "{{ .Values.persistence.storageClass }}"
 {{- end }}
 {{- end }}
+{{- if .Values.persistence.selector }}
+  selector: {{- include "tplvalues.render" (dict "value" .Values.persistence.selector "context" $) | nindent 4 }}
+{{- end -}}
+
 {{- end }}

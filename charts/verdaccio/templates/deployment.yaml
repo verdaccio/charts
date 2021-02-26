@@ -30,6 +30,9 @@ spec:
       labels:
         app: {{ template "verdaccio.name" . }}
         release: {{ .Release.Name }}
+        {{- if .Values.podLabels }}
+        {{- include "tplvalues.render" (dict "value" .Values.podLabels "context" $) | nindent 8 }}
+        {{- end }}        
     spec:
       {{- if .Values.serviceAccount.enabled }}
       serviceAccountName: {{ include "verdaccio.serviceAccountName" . }}

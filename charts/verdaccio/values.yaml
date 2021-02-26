@@ -33,6 +33,11 @@ affinity: {}
 ## Tolerations for nodes
 tolerations: []
 
+## Additional pod labels
+## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+##
+podLabels: {}
+
 podAnnotations: {}
 replicaCount: 1
 
@@ -169,6 +174,12 @@ persistence:
 
   accessMode: ReadWriteOnce
   size: 8Gi
+  ## selector can be used to match an existing PersistentVolume
+  ## selector:
+  ##   matchLabels:
+  ##     app: my-app  
+  selector: {}
+
   volumes:
   #  - name: nothing
   #    emptyDir: {}
