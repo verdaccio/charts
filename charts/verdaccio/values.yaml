@@ -177,7 +177,7 @@ persistence:
   ## selector can be used to match an existing PersistentVolume
   ## selector:
   ##   matchLabels:
-  ##     app: my-app  
+  ##     app: my-app
   selector: {}
 
   volumes:
