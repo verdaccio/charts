@@ -19,7 +19,7 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 Create the name of the service account to use
 */}}
 {{- define "verdaccio.serviceAccountName" -}}
-{{- if .Values.serviceAccount.enabled }}
+{{- if .Values.serviceAccount.create }}
 {{- default (include "verdaccio.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}

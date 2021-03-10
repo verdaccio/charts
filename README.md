@@ -111,7 +111,7 @@ and their default values.
 | `service.port`                     | Service port to expose                                          | `4873`                         |
 | `service.nodePort`                 | Service port to expose                                          | none                           |
 | `service.type`                     | Type of service to create                                       | `ClusterIP`                    |
-| `serviceAccount.enabled`           | Enable service account                                          | `false`                        |
+| `serviceAccount.create`            | Create service account                                          | `false`                        |
 | `serviceAccount.name`              | Service account Name                                            | none                           |
 | `extraEnvVars`                     | Define environment variables to be passed to the container      | `{}`                           |
 
