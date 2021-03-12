@@ -194,10 +194,10 @@ persistence:
   #   name: nothing
   #   readOnly: true
 
-podSecurityContext: {}
+podSecurityContext:
+  fsGroup: 101
 securityContext:
   runAsUser: 10001
-  fsGroup: 101
 
 priorityClass:
   enabled: false
