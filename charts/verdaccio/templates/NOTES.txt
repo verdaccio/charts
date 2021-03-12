@@ -3,9 +3,9 @@
 {{- if .Values.ingress.enabled }}
   {{- range $host := .Values.ingress.hosts }}
   {{- if $tls }}
-  https://{{ $host }}
+  https://{{ include "tplvalues.render" (dict "value" $host "context" $) }}
   {{- else }}
-  http://{{ $host }}
+  http://{{ include "tplvalues.render" (dict "value" $host "context" $) }}
   {{- end }}
 {{- end }}
 {{- else if contains "NodePort" .Values.service.type }}

@@ -12,10 +12,7 @@ kind: Ingress
 metadata:
   name: {{ template "verdaccio.fullname" . }}
   labels:
-    app: {{ template "verdaccio.name" . }}
-    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
+    {{- include "verdaccio.labels" . | nindent 4 }}
   annotations:
     {{- range $key, $value := .Values.ingress.annotations }}
       {{ $key }}: {{ $value | quote }}
@@ -24,7 +21,7 @@ spec:
   rules:
     {{- if .Values.ingress.hosts }}
     {{- range $host := .Values.ingress.hosts }}
-    - host: {{ $host }}
+    - host: {{ include "tplvalues.render" (dict "value" $host "context" $) }}
       http:
         paths:
           {{- range $ingressExtraPaths }}
@@ -52,6 +49,6 @@ spec:
     {{- end -}}
   {{- if .Values.ingress.tls }}
   tls:
-{{ toYaml .Values.ingress.tls | indent 4 }}
+    {{- toYaml .Values.ingress.tls | nindent 4 }}
   {{- end -}}
 {{- end}}

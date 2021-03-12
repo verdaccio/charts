@@ -7,10 +7,7 @@ metadata:
 {{- end }}
   name: {{ template "verdaccio.fullname" . }}
   labels:
-    app: {{ template "verdaccio.name" . }}
-    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
+    {{- include "verdaccio.labels" . | nindent 4 }}
 spec:
 {{- if .Values.service.clusterIP }}
   clusterIP: "{{ .Values.service.clusterIP }}"
@@ -37,6 +34,5 @@ spec:
       {{- end }}
       {{- end }}
   selector:
-    app: {{ template "verdaccio.name" . }}
-    release: {{ .Release.Name }}
+    {{- include "verdaccio.selectorLabels" . | nindent 4 }}
   type: {{ .Values.service.type }}
