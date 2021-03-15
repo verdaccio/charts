@@ -5,6 +5,9 @@ image:
   pullSecrets: []
     # - dockerhub-secret
 
+nameOverride: ""
+fullnameOverride: ""
+
 service:
   annotations: {}
   clusterIP: ""
@@ -38,7 +41,7 @@ tolerations: []
 ##
 podLabels: {}
 
-## Additional pod annoations
+## Additional pod annotations
 ## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
 ##
 podAnnotations: {}

@@ -114,6 +114,11 @@ and their default values.
 | `serviceAccount.create`            | Create service account                                          | `false`                        |
 | `serviceAccount.name`              | Service account Name                                            | none                           |
 | `extraEnvVars`                     | Define environment variables to be passed to the container      | `{}`                           |
+| `extraInitContainers`              | Define additional initContainers to be added to the deployment  | `[]`                           |
+| `securityContext`                  | Define Container Security Context                               | `{runAsUser=10001}`            |
+| `podSecurityContext`               | Define Pod Security Context                                     | `{fsGroup=101}`                |
+| `nameOverride`                     | Set resource name override                                      | `""`                           |
+| `fullnameOverride`                 | Set resource fullname override                                  | `""`                           |
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 
