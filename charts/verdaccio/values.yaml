@@ -71,11 +71,11 @@ ingress:
 ## Service account
 serviceAccount:
   # Specifies whether a service account should be created
-  enabled: false
+  create: false
   # Annotations to add to the service account
   annotations: {}
   # The name of the service account to use.
-  # If not set and enabled is true, a name is generated using the Chart's fullname template
+  # If not set and create is true, a name is generated using the Chart's fullname template
   name: ""
 
 # Extra Environment Values - allows yaml definitions
