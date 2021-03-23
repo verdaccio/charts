@@ -13,15 +13,15 @@ metadata:
   name: {{ template "verdaccio.fullname" . }}
   labels:
     {{- include "verdaccio.labels" . | nindent 4 }}
+  {{- with .Values.ingress.annotations }}
   annotations:
-    {{- range $key, $value := .Values.ingress.annotations }}
-      {{ $key }}: {{ $value | quote }}
-    {{- end }}
+    {{- include "tplvalues.render" (dict "value" . "context" $) | nindent 4 }}
+  {{- end }}
 spec:
   rules:
     {{- if .Values.ingress.hosts }}
     {{- range $host := .Values.ingress.hosts }}
-    - host: {{ include "tplvalues.render" (dict "value" $host "context" $) }}
+    - host: {{ tpl $host $ }}
       http:
         paths:
           {{- range $ingressExtraPaths }}
