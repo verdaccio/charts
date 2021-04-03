@@ -3,9 +3,9 @@
 {{- if .Values.ingress.enabled }}
   {{- range $host := .Values.ingress.hosts }}
   {{- if $tls }}
-  https://{{ $host }}
+  https://{{ tpl $host $ }}
   {{- else }}
-  http://{{ $host }}
+  http://{{ tpl $host $ }}
   {{- end }}
 {{- end }}
 {{- else if contains "NodePort" .Values.service.type }}

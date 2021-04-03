@@ -2,8 +2,11 @@ image:
   repository: verdaccio/verdaccio
   tag: 4.12.0
   pullPolicy: IfNotPresent
-  pullSecrets:
-    # name: dockerhub-secret
+  pullSecrets: []
+    # - dockerhub-secret
+
+nameOverride: ""
+fullnameOverride: ""
 
 service:
   annotations: {}
@@ -38,17 +41,20 @@ tolerations: []
 ##
 podLabels: {}
 
+## Additional pod annotations
+## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
+##
 podAnnotations: {}
+
 replicaCount: 1
 
-resources:
-  {}
-  # limits:
-  #  cpu: 100m
-  #  memory: 512Mi
+resources: {}
   # requests:
-  #  cpu: 100m
-  #  memory: 512Mi
+  #   cpu: 100m
+  #   memory: 512Mi
+  # limits:
+  #   cpu: 100m
+  #   memory: 512Mi
 
 ingress:
   enabled: false
@@ -87,6 +93,9 @@ extraEnvVars:
 #        key: secret_key
 #  - name: REGULAR_VAR
 #    value: ABC
+
+# Extra Init Containers - allows yaml definitions
+extraInitContainers: []
 
 configMap: |
   # This is the config file used for the docker images.
@@ -184,14 +193,14 @@ persistence:
   #  - name: nothing
   #    emptyDir: {}
   mounts:
-#  - mountPath: /var/nothing
-#    name: nothing
-#    readOnly: true
+  # - mountPath: /var/nothing
+  #   name: nothing
+  #   readOnly: true
 
-securityContext:
-  enabled: true
-  runAsUser: 10001
+podSecurityContext:
   fsGroup: 101
+securityContext:
+  runAsUser: 10001
 
 priorityClass:
   enabled: false
