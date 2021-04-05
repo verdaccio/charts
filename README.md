@@ -172,3 +172,22 @@ $ helm install npm \
     --set persistence.existingClaim=PVC_NAME \
     verdaccio/verdaccio
 ```
+
+### Migrating chart 2.x -> 3.x
+Due to some breaking changes in Selector Labels and Security Contexts in Chart `3.0.0` you will need to migrate when upgrading.
+
+First off, the `securityContext.enabled` field has been removed.  
+In addition to this, `fsGroup` is not a valid Container Security Context field and has been migrated to the `podSecurityContext` instead.
+```diff
+# values.yaml
+podSecurityContext:
++  fsGroup: 101
+ securityContext:
+-  enabled: true
+-  fsGroup: 101
+   runAsUser: 10001
+```
+
+Secondly, the `apps.v1.Deployment.spec.selector` field is immutable and changes were made to Selector Labels which tries to update this.  
+To get around this, you will need to `kubectl delete deployment $deploymentName` before doing a `helm upgrade`  
+So long as your PVC is not destroyed, the new deployment will be rolled out with the same PVC as before and your data will remain intact.
