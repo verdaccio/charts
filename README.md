@@ -86,7 +86,7 @@ and their default values.
 | `image.pullPolicy`                 | Image pull policy                                               | `IfNotPresent`                 |
 | `image.pullSecrets`                | Image pull secrets                                              | `[]`                           |
 | `image.repository`                 | Verdaccio container image repository                            | `verdaccio/verdaccio`          |
-| `image.tag`                        | Verdaccio container image tag                                   | `5.0.2`                        |
+| `image.tag`                        | Verdaccio container image tag                                   | `5.0.4`                        |
 | `nodeSelector`                     | Node labels for pod assignment                                  | `{}`                           |
 | `tolerations`                      | List of node taints to tolerate                                 | `[]`                           |
 | `persistence.accessMode`           | PVC Access Mode for Verdaccio volume                            | `ReadWriteOnce`                |
