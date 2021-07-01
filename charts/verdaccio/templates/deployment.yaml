@@ -20,6 +20,7 @@ spec:
     metadata:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        checksum/htpasswd-secret: {{ include (print $.Template.BasePath "/htpasswd-secret.yaml") . | sha256sum }}
         {{- include "verdaccio.podAnnotations" . | nindent 8 }}
       labels:
         {{- include "verdaccio.podLabels" . | nindent 8 }}
@@ -66,6 +67,11 @@ spec:
             - mountPath: /verdaccio/storage
               name: storage
               readOnly: false
+            {{- if .Values.useSecretHtpasswd }}
+            - mountPath: /verdaccio/auth
+              name: htpasswd
+              readOnly: true
+            {{- end }}
             - mountPath: /verdaccio/conf
               name: config
               readOnly: true
@@ -77,6 +83,11 @@ spec:
       - name: config
         configMap:
           name: {{ .Values.existingConfigMap | default (include "verdaccio.fullname" .) }}
+      {{- if .Values.useSecretHtpasswd }}
+      - name: htpasswd
+        secret:
+          secretName: {{ include "verdaccio.fullname" . }}-htpasswd
+      {{- end }}
       {{- with .Values.persistence.volumes }}
       {{- include "tplvalues.render" (dict "value" . "context" $) | nindent 6 }}
       {{- end }}
