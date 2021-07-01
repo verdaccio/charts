@@ -68,8 +68,9 @@ spec:
               name: storage
               readOnly: false
             {{- if .Values.useSecretHtpasswd }}
-            - mountPath: /verdaccio/auth
+            - mountPath: /verdaccio/storage
               name: htpasswd
+              subPath: htpasswd
               readOnly: true
             {{- end }}
             - mountPath: /verdaccio/conf
