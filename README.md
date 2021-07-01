@@ -147,10 +147,11 @@ $ helm install npm -f values.yaml verdaccio/verdaccio
 
 ### Generate htpasswd using helm
 
-This require helm v3.2.0 or above. You can list all username and password in 
+This requires helm v3.2.0 or above. You can list all username and password in 
 `.Values.secrets.htpasswd`. Helm will generate secret with htpaswd format. This
-file is mounted on pod in this path `/verdaccio/auth/htpasswd`. Default config
-uses this.
+file is mounted on pod in this path `/verdaccio/auth/htpasswd`. The Default
+config uses this.
+
 > **Tip**: These values are in plaintext. So don't forget to put aditional
 > encryption.
 
