@@ -43,6 +43,8 @@ In this example we use `npm` as release name:
 helm install npm verdaccio/verdaccio
 ```
 
+> **Note**: Avoid release name `verdaccio`, otherwise, Kubernetes-generated environment variables may get into conflict with Verdaccio's own environment variables in the Pod itself. In case you insist naming the release `verdaccio`, to mitigate the problem, you can use either `nameOverride` or `fullnameOverride` to have a different name for the service.
+
 ### Deploy a specific version
 
 ```bash
