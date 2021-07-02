@@ -1,4 +1,4 @@
-# Verdaccio test
+# Verdaccio
 
 [Verdaccio](https://www.verdaccio.org) is a lightweight private
 [NPM](https://www.npmjs.com) proxy registry.
