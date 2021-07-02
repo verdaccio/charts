@@ -20,7 +20,7 @@ spec:
     metadata:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
-        checksum/htpasswd-secret: {{ sha256sum .Values.secrets.htpasswd }}
+        checksum/htpasswd-secret: {{ toJson .Values.secrets.htpasswd | sha256sum }}
         {{- include "verdaccio.podAnnotations" . | nindent 8 }}
       labels:
         {{- include "verdaccio.podLabels" . | nindent 8 }}
