@@ -155,6 +155,19 @@ config uses this.
 > **Tip**: These values are in plaintext. So don't forget to put aditional
 > encryption.
 
+#### Example
+```yaml
+useSecretHtpasswd: true
+secrets:
+  # list of users and password for htpasswd plugin
+  # This this is mounted as /verdaccio/auth/htpasswd on pods
+  htpasswd:
+    - username: "verdaccio"
+      password: "verdaccio"
+```
+This config will create a htpasswd file with user "verdaccio", If in config 
+'htpasswd' auth is used. You can login using this credentials.
+
 ### Custom ConfigMap
 
 When creating a new chart with this chart as a dependency, CustomConfigMap can
