@@ -119,6 +119,7 @@ configMap: |
 
   auth:
     htpasswd:
+      # Do not change this path if secrets htpasswd is used.
       file: /verdaccio/storage/htpasswd
       # Maximum amount of users allowed to register, defaults to "+infinity".
       # You can set this to -1 to disable registration.
@@ -206,3 +207,16 @@ priorityClass:
   # name: ""
 
 existingConfigMap: false
+
+# use htpasswd secrets
+useSecretHtpasswd: false
+
+# Secrets
+secrets:
+  # list of users and password for htpasswd plugin
+  # This this is mounted as /verdaccio/auth/htpasswd on pods
+  htpasswd: []
+  # - username: "test"
+  #   password: "test"
+  # - username: "blah"
+  #   password: "blah"
