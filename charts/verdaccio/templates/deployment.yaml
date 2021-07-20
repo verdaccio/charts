@@ -67,7 +67,7 @@ spec:
             - mountPath: /verdaccio/storage
               name: storage
               readOnly: false
-            {{- if .Values.useSecretHtpasswd }}
+            {{- if .Values.secrets.htpasswd }}
             - mountPath: /verdaccio/storage/htpasswd
               name: htpasswd
               subPath: htpasswd
@@ -84,7 +84,7 @@ spec:
       - name: config
         configMap:
           name: {{ .Values.existingConfigMap | default (include "verdaccio.fullname" .) }}
-      {{- if .Values.useSecretHtpasswd }}
+      {{- if .Values.secrets.htpasswd }}
       - name: htpasswd
         secret:
           secretName: {{ include "verdaccio.fullname" . }}-htpasswd

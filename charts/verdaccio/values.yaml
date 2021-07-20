@@ -208,9 +208,6 @@ priorityClass:
 
 existingConfigMap: false
 
-# use htpasswd secrets
-useSecretHtpasswd: false
-
 # Secrets
 secrets:
   # list of users and password for htpasswd plugin
