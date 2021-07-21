@@ -150,9 +150,11 @@ $ helm install npm -f values.yaml verdaccio/verdaccio
 This requires helm v3.2.0 or above. You can list all username and password in 
 `.Values.secrets.htpasswd`. Helm will generate secret with htpaswd format. This
 file is mounted on pod in this path `/verdaccio/auth/htpasswd`. The Default
-config uses this.
+config uses this. The conditional statement `{{- if .Values.secrets.htpasswd }}` 
+is evaluated as false if the list is an empty collection. 
+(Source [helm flow control](https://helm.sh/docs/chart_template_guide/control_structures/#ifelse))
 
-> **Tip**: These values are in plaintext. So don't forget to put aditional
+> **Tip**: These values are in plaintext. So don't forget to put additional
 > encryption.
 
 #### Example
