@@ -159,7 +159,6 @@ is evaluated as false if the list is an empty collection.
 
 #### Example
 ```yaml
-useSecretHtpasswd: true
 secrets:
   # list of users and password for htpasswd plugin
   # This this is mounted as /verdaccio/auth/htpasswd on pods
