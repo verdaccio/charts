@@ -123,7 +123,7 @@ and their default values.
 | `fullnameOverride`                 | Set resource fullname override                                                     | `""`                           |
 | `useSecretHtpasswd`                | Use htpasswd from `.Values.secrets.htpasswd`. This require helm v3.2.0 or above.   | `false`                        |
 | `secrets.htpasswd`                 | user and password list to generate htpasswd.                                       | `[]`                           |
-| `ingress.enabled`                  | Enable/Disable Ingress                                                             | `false                         |
+| `ingress.enabled`                  | Enable/Disable Ingress                                                             | `false`                        |
 | `ingress.className`                | Ingress Class Name (k8s `>=1.18` required)                                         | `""`                           |
 | `ingress.annotations`              | Ingress Annotations                                                                | `{}`                           |
 | `ingress.hosts`                    | List of Ingress Hosts                                                              | `[]`                           |
