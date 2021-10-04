@@ -58,8 +58,7 @@ resources: {}
 
 ingress:
   enabled: false
-  # Set to true if you are on an old cluster where apiVersion extensions/v1beta1 is required
-  useExtensionsApi: false
+  className: ""
   paths:
     - /
   # Use this to define, ALB ingress's actions annotation based routing. Ex: for ssl-redirect

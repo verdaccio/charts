@@ -1,16 +1,23 @@
 {{- if .Values.ingress.enabled }}
-{{- $serviceName := include "verdaccio.fullname" . -}}
-{{- $servicePort := .Values.service.port -}}
+{{- $fullName := include "verdaccio.fullname" . -}}
+{{- $svcPort := .Values.service.port -}}
 {{- $paths := .Values.ingress.paths -}}
 {{- $ingressExtraPaths := .Values.ingress.extraPaths -}}
-{{- if .Values.ingress.useExtensionsApi }}
-apiVersion: extensions/v1beta1
-{{- else }}
+{{- if and .Values.ingress.className (not (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion)) }}
+  {{- if not (hasKey .Values.ingress.annotations "kubernetes.io/ingress.class") }}
+  {{- $_ := set .Values.ingress.annotations "kubernetes.io/ingress.class" .Values.ingress.className}}
+  {{- end }}
+{{- end }}
+{{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: networking.k8s.io/v1
+{{- else if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
 apiVersion: networking.k8s.io/v1beta1
+{{- else -}}
+apiVersion: extensions/v1beta1
 {{- end }}
 kind: Ingress
 metadata:
-  name: {{ template "verdaccio.fullname" . }}
+  name: {{ $fullName }}
   labels:
     {{- include "verdaccio.labels" . | nindent 4 }}
   {{- with .Values.ingress.annotations }}
@@ -18,34 +25,63 @@ metadata:
     {{- include "tplvalues.render" (dict "value" . "context" $) | nindent 4 }}
   {{- end }}
 spec:
+  {{- if and .Values.ingress.className (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion) }}
+  ingressClassName: {{ .Values.ingress.className }}
+  {{- end }}
   rules:
     {{- if .Values.ingress.hosts }}
     {{- range $host := .Values.ingress.hosts }}
-    - host: {{ tpl $host $ }}
+    - host: {{ tpl $host $ | quote }}
       http:
         paths:
-          {{- range $ingressExtraPaths }}
+        {{- range $ingressExtraPaths }}
           - path: {{ default "/" .path | quote }}
+            {{- if and .pathType (semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion) }}
+            pathType: {{ .pathType }}
+            {{- end }}
             backend:
-              serviceName: {{ default $serviceName .service }}
-              servicePort: {{ default $servicePort .port }}
+              {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
+              service:
+                name: {{ default $fullName .service }}
+                port:
+                  number: {{ default $svcPort .port }}
+              {{- else }}
+              serviceName: {{ default $fullName .service }}
+              servicePort: {{ default $svcPort .port }}
+              {{- end }}
           {{- end }}
           {{- range $p := $paths }}
           - path: {{ $p }}
+            pathType: Prefix
             backend:
-              serviceName: {{ $serviceName }}
-              servicePort: {{ $servicePort }}
+              {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
+              service:
+                name: {{ $fullName }}
+                port:
+                  number: {{ $svcPort }}
+              {{- else }}
+              serviceName: {{ $fullName }}
+              servicePort: {{ $svcPort }}
+              {{- end }}
           {{- end -}}
-    {{- end -}}
+        {{- end -}}
     {{- else }}
     - http:
         paths:
-    {{- range $p := $paths }}
+        {{- range $p := $paths }}
           - path: {{ $p }}
+            pathType: Prefix
             backend:
-              serviceName: {{ $serviceName }}
-              servicePort: {{ $servicePort }}
-    {{- end -}}
+              {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
+              service:
+                name: {{ $fullName }}
+                port:
+                  number: {{ $svcPort }}
+              {{- else }}
+              serviceName: {{ $fullName }}
+              servicePort: {{ $svcPort }}
+              {{- end }}
+          {{- end -}}
     {{- end -}}
   {{- if .Values.ingress.tls }}
   tls:
