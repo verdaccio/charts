@@ -81,54 +81,54 @@ deletes the release.
 The following table lists the configurable parameters of the Verdaccio chart
 and their default values.
 
-| Parameter                          | Description                                                                        | Default                        |
-| ---------------------------------- | ---------------------------------------------------------------------------------- | ------------------------------ |
-| `affinity`                         | Affinity for pod assignment                                                        | `{}`                           |
-| `existingConfigMap`                | Name of custom ConfigMap to use                                                    | `false`                        |
-| `image.pullPolicy`                 | Image pull policy                                                                  | `IfNotPresent`                 |
-| `image.pullSecrets`                | Image pull secrets                                                                 | `[]`                           |
-| `image.repository`                 | Verdaccio container image repository                                               | `verdaccio/verdaccio`          |
-| `image.tag`                        | Verdaccio container image tag                                                      | `5.1.0`                        |
-| `nodeSelector`                     | Node labels for pod assignment                                                     | `{}`                           |
-| `tolerations`                      | List of node taints to tolerate                                                    | `[]`                           |
-| `persistence.accessMode`           | PVC Access Mode for Verdaccio volume                                               | `ReadWriteOnce`                |
-| `persistence.enabled`              | Enable persistence using PVC                                                       | `true`                         |
-| `persistence.existingClaim`        | Use existing PVC                                                                   | `nil`                          |
-| `persistence.mounts`               | Additional mounts                                                                  | `nil`                          |
-| `persistence.size`                 | PVC Storage Request for Verdaccio volume                                           | `8Gi`                          |
-| `persistence.storageClass`         | PVC Storage Class for Verdaccio volume                                             | `nil`                          |
-| `persistence.selector`             | Selector to match an existing Persistent Volume                                    | `{}` (evaluated as a template) |
-| `persistence.volumes`              | Additional volumes                                                                 | `nil`                          |
-| `podLabels`                        | Additional pod labels                                                              | `{}` (evaluated as a template) |
-| `podAnnotations`                   | Annotations to add to each pod                                                     | `{}`                           |
-| `priorityClass.enabled`            | Enable specifying pod priorityClassName                                            | `false`                        |
-| `priorityClass.name`               | PriorityClassName to be specified in pod spec                                      | `""`                           |
-| `replicaCount`                     | Desired number of pods                                                             | `1`                            |
-| `resources`                        | CPU/Memory resource requests/limits                                                | `{}`                           |
-| `service.annotations`              | Annotations to add to service                                                      | none                           |
-| `service.clusterIP`                | IP address to assign to service                                                    | `""`                           |
-| `service.externalIPs`              | Service external IP addresses                                                      | `[]`                           |
-| `service.loadBalancerIP`           | IP address to assign to load balancer (if supported)                               | `""`                           |
-| `service.loadBalancerSourceRanges` | List of IP CIDRs allowed access to load balancer (if supported)                    | `[]`                           |
-| `service.port`                     | Service port to expose                                                             | `4873`                         |
-| `service.nodePort`                 | Service port to expose                                                             | none                           |
-| `service.type`                     | Type of service to create                                                          | `ClusterIP`                    |
-| `serviceAccount.create`            | Create service account                                                             | `false`                        |
-| `serviceAccount.name`              | Service account Name                                                               | none                           |
-| `extraEnvVars`                     | Define environment variables to be passed to the container                         | `{}`                           |
-| `extraInitContainers`              | Define additional initContainers to be added to the deployment                     | `[]`                           |
-| `securityContext`                  | Define Container Security Context                                                  | `{runAsUser=10001}`            |
-| `podSecurityContext`               | Define Pod Security Context                                                        | `{fsGroup=101}`                |
-| `nameOverride`                     | Set resource name override                                                         | `""`                           |
-| `fullnameOverride`                 | Set resource fullname override                                                     | `""`                           |
-| `useSecretHtpasswd`                | Use htpasswd from `.Values.secrets.htpasswd`. This require helm v3.2.0 or above.   | `false`                        |
-| `secrets.htpasswd`                 | user and password list to generate htpasswd.                                       | `[]`                           |
-| `ingress.enabled`                  | Enable/Disable Ingress                                                             | `false`                        |
-| `ingress.className`                | Ingress Class Name (k8s `>=1.18` required)                                         | `""`                           |
-| `ingress.annotations`              | Ingress Annotations                                                                | `{}`                           |
-| `ingress.hosts`                    | List of Ingress Hosts                                                              | `[]`                           |
-| `ingress.paths`                    | List of Ingress Paths                                                              | `["/"]`                        |
-| `ingress.extraPaths`               | List of extra Ingress Paths                                                        | `[]`                           |
+| Parameter                          | Description                                                                      | Default                        |
+| ---------------------------------- | -------------------------------------------------------------------------------- | ------------------------------ |
+| `affinity`                         | Affinity for pod assignment                                                      | `{}`                           |
+| `existingConfigMap`                | Name of custom ConfigMap to use                                                  | `false`                        |
+| `image.pullPolicy`                 | Image pull policy                                                                | `IfNotPresent`                 |
+| `image.pullSecrets`                | Image pull secrets                                                               | `[]`                           |
+| `image.repository`                 | Verdaccio container image repository                                             | `verdaccio/verdaccio`          |
+| `image.tag`                        | Verdaccio container image tag                                                    | `5.2.0`                        |
+| `nodeSelector`                     | Node labels for pod assignment                                                   | `{}`                           |
+| `tolerations`                      | List of node taints to tolerate                                                  | `[]`                           |
+| `persistence.accessMode`           | PVC Access Mode for Verdaccio volume                                             | `ReadWriteOnce`                |
+| `persistence.enabled`              | Enable persistence using PVC                                                     | `true`                         |
+| `persistence.existingClaim`        | Use existing PVC                                                                 | `nil`                          |
+| `persistence.mounts`               | Additional mounts                                                                | `nil`                          |
+| `persistence.size`                 | PVC Storage Request for Verdaccio volume                                         | `8Gi`                          |
+| `persistence.storageClass`         | PVC Storage Class for Verdaccio volume                                           | `nil`                          |
+| `persistence.selector`             | Selector to match an existing Persistent Volume                                  | `{}` (evaluated as a template) |
+| `persistence.volumes`              | Additional volumes                                                               | `nil`                          |
+| `podLabels`                        | Additional pod labels                                                            | `{}` (evaluated as a template) |
+| `podAnnotations`                   | Annotations to add to each pod                                                   | `{}`                           |
+| `priorityClass.enabled`            | Enable specifying pod priorityClassName                                          | `false`                        |
+| `priorityClass.name`               | PriorityClassName to be specified in pod spec                                    | `""`                           |
+| `replicaCount`                     | Desired number of pods                                                           | `1`                            |
+| `resources`                        | CPU/Memory resource requests/limits                                              | `{}`                           |
+| `service.annotations`              | Annotations to add to service                                                    | none                           |
+| `service.clusterIP`                | IP address to assign to service                                                  | `""`                           |
+| `service.externalIPs`              | Service external IP addresses                                                    | `[]`                           |
+| `service.loadBalancerIP`           | IP address to assign to load balancer (if supported)                             | `""`                           |
+| `service.loadBalancerSourceRanges` | List of IP CIDRs allowed access to load balancer (if supported)                  | `[]`                           |
+| `service.port`                     | Service port to expose                                                           | `4873`                         |
+| `service.nodePort`                 | Service port to expose                                                           | none                           |
+| `service.type`                     | Type of service to create                                                        | `ClusterIP`                    |
+| `serviceAccount.create`            | Create service account                                                           | `false`                        |
+| `serviceAccount.name`              | Service account Name                                                             | none                           |
+| `extraEnvVars`                     | Define environment variables to be passed to the container                       | `{}`                           |
+| `extraInitContainers`              | Define additional initContainers to be added to the deployment                   | `[]`                           |
+| `securityContext`                  | Define Container Security Context                                                | `{runAsUser=10001}`            |
+| `podSecurityContext`               | Define Pod Security Context                                                      | `{fsGroup=101}`                |
+| `nameOverride`                     | Set resource name override                                                       | `""`                           |
+| `fullnameOverride`                 | Set resource fullname override                                                   | `""`                           |
+| `useSecretHtpasswd`                | Use htpasswd from `.Values.secrets.htpasswd`. This require helm v3.2.0 or above. | `false`                        |
+| `secrets.htpasswd`                 | user and password list to generate htpasswd.                                     | `[]`                           |
+| `ingress.enabled`                  | Enable/Disable Ingress                                                           | `false`                        |
+| `ingress.className`                | Ingress Class Name (k8s `>=1.18` required)                                       | `""`                           |
+| `ingress.annotations`              | Ingress Annotations                                                              | `{}`                           |
+| `ingress.hosts`                    | List of Ingress Hosts                                                            | `[]`                           |
+| `ingress.paths`                    | List of Ingress Paths                                                            | `["/"]`                        |
+| `ingress.extraPaths`               | List of extra Ingress Paths                                                      | `[]`                           |
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 
@@ -153,17 +153,18 @@ $ helm install npm -f values.yaml verdaccio/verdaccio
 
 ### Generate htpasswd using helm
 
-This requires helm v3.2.0 or above. You can list all username and password in 
+This requires helm v3.2.0 or above. You can list all username and password in
 `.Values.secrets.htpasswd`. Helm will generate secret with htpaswd format. This
 file is mounted on pod in this path `/verdaccio/auth/htpasswd`. The Default
-config uses this. The conditional statement `{{- if .Values.secrets.htpasswd }}` 
-is evaluated as false if the list is an empty collection. 
+config uses this. The conditional statement `{{- if .Values.secrets.htpasswd }}`
+is evaluated as false if the list is an empty collection.
 (Source [helm flow control](https://helm.sh/docs/chart_template_guide/control_structures/#ifelse))
 
 > **Tip**: These values are in plaintext. So don't forget to put additional
 > encryption.
 
 #### Example
+
 ```yaml
 secrets:
   # list of users and password for htpasswd plugin
@@ -172,7 +173,8 @@ secrets:
     - username: "verdaccio"
       password: "verdaccio"
 ```
-This config will create a htpasswd file with user "verdaccio", If in config 
+
+This config will create a htpasswd file with user "verdaccio", If in config
 'htpasswd' auth is used. You can login using this credentials.
 
 ### Custom ConfigMap
