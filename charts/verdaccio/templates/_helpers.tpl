@@ -101,7 +101,7 @@ spec:
     {{- end }}
   {{- end }}
   {{- if (not (empty $labels)) }}
-    {{- toYaml $labels }}
+    {{- toYaml $labels | nindent 0 }}
   {{- end }}
 {{- end -}}
 
