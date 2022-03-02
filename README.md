@@ -104,6 +104,8 @@ and their default values.
 | `priorityClass.enabled`            | Enable specifying pod priorityClassName                                          | `false`                        |
 | `priorityClass.name`               | PriorityClassName to be specified in pod spec                                    | `""`                           |
 | `replicaCount`                     | Desired number of pods                                                           | `1`                            |
+| `livenessProbe`                    | Configuration of liveness probe                                                  | `{}`                           |
+| `readinessProbe`                   | Configuration of readiness probe                                                 | `{}`                           |
 | `resources`                        | CPU/Memory resource requests/limits                                              | `{}`                           |
 | `service.annotations`              | Annotations to add to service                                                    | none                           |
 | `service.clusterIP`                | IP address to assign to service                                                  | `""`                           |
