@@ -6,4 +6,4 @@ metadata:
     {{- include "verdaccio.labels" . | nindent 4 }}
 data:
   config.yaml: |-
-    {{- include "tplvalues.render" (dict "value" .Values.configMap "context" $) | nindent 4 }}
+    {{- include "tplvalues.render" (dict "value" (printf "{{.Values.configMap}}") "context" $) | nindent 4 }}
