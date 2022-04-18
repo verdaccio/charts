@@ -48,6 +48,21 @@ podAnnotations: {}
 
 replicaCount: 1
 
+## Define Probes
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes
+livenessProbe: {}
+  # initialDelaySeconds: 0
+  # periodSeconds: 10
+  # timeoutSeconds: 1
+  # successThreshold: 1
+  # failureThreshold: 3
+readinessProbe: {}
+  # initialDelaySeconds: 0
+  # periodSeconds: 10
+  # timeoutSeconds: 1
+  # successThreshold: 1
+  # failureThreshold: 3
+
 resources: {}
   # requests:
   #   cpu: 100m
@@ -97,7 +112,7 @@ extraEnvVars:
 extraInitContainers: []
 
 configMap: |
-  # This is the config file used for the docker images.
+  # This is the config file used for the docker images
   # It allows all users to do anything, so don't use it on production systems.
   #
   # Do not configure host and port under `listen` in this file

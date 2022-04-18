@@ -46,12 +46,24 @@ spec:
             httpGet:
               path: /-/ping
               port: http
-            initialDelaySeconds: 5
+            {{- with .Values.livenessProbe }}
+            initialDelaySeconds: {{ .initialDelaySeconds | default 5 }}
+            periodSeconds: {{ .periodSeconds | default 10 }}
+            timeoutSeconds: {{ .timeoutSeconds | default 1 }}
+            successThreshold: {{ .successThreshold | default 1 }}
+            failureThreshold: {{ .failureThreshold | default 3 }}
+            {{- end }}
           readinessProbe:
             httpGet:
               path: /-/ping
               port: http
-            initialDelaySeconds: 5
+            {{- with .Values.readinessProbe }}
+            initialDelaySeconds: {{ .initialDelaySeconds | default 5 }}
+            periodSeconds: {{ .periodSeconds | default 10 }}
+            timeoutSeconds: {{ .timeoutSeconds | default 1 }}
+            successThreshold: {{ .successThreshold | default 1 }}
+            failureThreshold: {{ .failureThreshold | default 3 }}
+            {{- end }}
           {{- with .Values.securityContext }}
           securityContext:
             {{- toYaml . | nindent 12 }}
