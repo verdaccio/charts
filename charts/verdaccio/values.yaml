@@ -179,6 +179,12 @@ configMap: |
   logs: {type: stdout, format: pretty, level: http}
   # logs: {type: file, path: verdaccio.log, level: info}
 
+## Remote Auth Headers
+## Used to authenticate with private upstream repos
+remoteAuthHeaders: {}
+  # corp_artifactory: someval
+  # npmjs: someotherval
+
 persistence:
   enabled: true
   ## A manually managed Persistent Volume and Claim

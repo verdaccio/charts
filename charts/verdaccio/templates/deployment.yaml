@@ -39,6 +39,11 @@ spec:
         - name: {{ template "verdaccio.name" . }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.remoteAuthHeaders }}
+          envFrom:
+            - secretRef:
+                name: {{ template "verdaccio.fullname" . }}
+          {{- end }}
           ports:
             - containerPort: 4873
               name: http
