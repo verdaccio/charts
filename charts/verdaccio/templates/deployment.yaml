@@ -39,7 +39,7 @@ spec:
         - name: {{ template "verdaccio.name" . }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          {{- if .Values.remoteAuthHeaders }}
+          {{- if .Values.secretEnvVars }}
           envFrom:
             - secretRef:
                 name: {{ template "verdaccio.fullname" . }}

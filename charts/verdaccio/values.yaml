@@ -108,6 +108,13 @@ extraEnvVars:
 #  - name: REGULAR_VAR
 #    value: ABC
 
+## Secret Environment Variables
+## Use this to pass sensitive key:values to the container via k8s secret
+secretEnvVars: {}
+  # SECRET_ENV_VAR: secretValue
+  # corp_artifactory: foo
+  # npmjs: bar
+
 # Extra Init Containers - allows yaml definitions
 extraInitContainers: []
 
@@ -178,12 +185,6 @@ configMap: |
   # log settings
   logs: {type: stdout, format: pretty, level: http}
   # logs: {type: file, path: verdaccio.log, level: info}
-
-## Remote Auth Headers
-## Used to authenticate with private upstream repos
-remoteAuthHeaders: {}
-  # corp_artifactory: someval
-  # npmjs: someotherval
 
 persistence:
   enabled: true
