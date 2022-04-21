@@ -42,7 +42,7 @@ spec:
           {{- if .Values.secretEnvVars }}
           envFrom:
             - secretRef:
-                name: {{ template "verdaccio.fullname" . }}
+                name: {{ template "verdaccio.fullname" . }}-env
           {{- end }}
           ports:
             - containerPort: 4873
