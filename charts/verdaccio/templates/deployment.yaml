@@ -21,6 +21,9 @@ spec:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
         checksum/htpasswd-secret: {{ toJson .Values.secrets.htpasswd | sha256sum }}
+        {{- if .Values.secretEnvVars }}
+        checksum/env-secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+        {{- end }}
         {{- include "verdaccio.podAnnotations" . | nindent 8 }}
       labels:
         {{- include "verdaccio.podLabels" . | nindent 8 }}
