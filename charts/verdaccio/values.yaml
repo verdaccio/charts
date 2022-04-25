@@ -108,6 +108,13 @@ extraEnvVars:
 #  - name: REGULAR_VAR
 #    value: ABC
 
+## Secret Environment Variables
+## Use this to pass sensitive key:values to the container via k8s secret
+secretEnvVars: {}
+  # SECRET_ENV_VAR: secretValue
+  # corp_artifactory: foo
+  # npmjs: bar
+
 # Extra Init Containers - allows yaml definitions
 extraInitContainers: []
 

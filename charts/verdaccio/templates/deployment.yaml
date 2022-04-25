@@ -21,6 +21,9 @@ spec:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
         checksum/htpasswd-secret: {{ toJson .Values.secrets.htpasswd | sha256sum }}
+        {{- if .Values.secretEnvVars }}
+        checksum/env-secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+        {{- end }}
         {{- include "verdaccio.podAnnotations" . | nindent 8 }}
       labels:
         {{- include "verdaccio.podLabels" . | nindent 8 }}
@@ -39,6 +42,11 @@ spec:
         - name: {{ template "verdaccio.name" . }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.secretEnvVars }}
+          envFrom:
+            - secretRef:
+                name: {{ template "verdaccio.fullname" . }}-env
+          {{- end }}
           ports:
             - containerPort: 4873
               name: http
