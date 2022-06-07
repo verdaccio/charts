@@ -115,6 +115,10 @@ secretEnvVars: {}
   # corp_artifactory: foo
   # npmjs: bar
 
+## Existing Secret
+## Existing secret containing environment variables to be passed to the container
+existingSecret: ""
+
 # Extra Init Containers - allows yaml definitions
 extraInitContainers: []
 

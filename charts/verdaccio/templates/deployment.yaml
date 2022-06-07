@@ -42,10 +42,16 @@ spec:
         - name: {{ template "verdaccio.name" . }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          {{- if .Values.secretEnvVars }}
+          {{- if or .Values.secretEnvVars .Values.existingSecret }}
           envFrom:
+            {{- if .Values.secretEnvVars }}
             - secretRef:
                 name: {{ template "verdaccio.fullname" . }}-env
+            {{- end }}
+            {{- if .Values.existingSecret }}
+            - secretRef:
+                name: {{ .Values.existingSecret }}
+            {{- end }}
           {{- end }}
           ports:
             - containerPort: 4873
