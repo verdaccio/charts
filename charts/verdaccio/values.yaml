@@ -99,7 +99,7 @@ serviceAccount:
   name: ""
 
 # Extra Environment Values - allows yaml definitions
-extraEnvVars:
+# extraEnvVars:
 #  - name: VALUE_FROM_SECRET
 #    valueFrom:
 #      secretKeyRef:
@@ -107,6 +107,9 @@ extraEnvVars:
 #        key: secret_key
 #  - name: REGULAR_VAR
 #    value: ABC
+extraEnvVars:
+  - name: VERDACCIO_PORT
+    value: "4873"
 
 ## Secret Environment Variables
 ## Use this to pass sensitive key:values to the container via k8s secret
