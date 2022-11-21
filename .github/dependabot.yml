@@ -4,7 +4,3 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-  - package-ecosystem: "docker"
-    directory: "/charts/verdaccio"
-    schedule:
-      interval: "daily"
