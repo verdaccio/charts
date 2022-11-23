@@ -49,7 +49,7 @@ helm install npm verdaccio/verdaccio
 
 ```bash
 # Helm v3+
-helm install npm --set image.tag=5.17.0 verdaccio/verdaccio
+helm install npm --set image.tag=5.18.0 verdaccio/verdaccio
 ```
 
 ### Upgrading Verdaccio
@@ -88,7 +88,7 @@ and their default values.
 | `image.pullPolicy`                 | Image pull policy                                                                | `IfNotPresent`                 |
 | `image.pullSecrets`                | Image pull secrets                                                               | `[]`                           |
 | `image.repository`                 | Verdaccio container image repository                                             | `verdaccio/verdaccio`          |
-| `image.tag`                        | Verdaccio container image tag                                                    | `5.17.0`                       |
+| `image.tag`                        | Verdaccio container image tag                                                    | `5.18.0`                       |
 | `nodeSelector`                     | Node labels for pod assignment                                                   | `{}`                           |
 | `tolerations`                      | List of node taints to tolerate                                                  | `[]`                           |
 | `persistence.accessMode`           | PVC Access Mode for Verdaccio volume                                             | `ReadWriteOnce`                |
