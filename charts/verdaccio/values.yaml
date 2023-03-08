@@ -187,8 +187,8 @@ configMap: |
       enabled: true
 
   # log settings
-  logs: {type: stdout, format: pretty, level: http}
-  # logs: {type: file, path: verdaccio.log, level: info}
+  log: {type: stdout, format: pretty, level: http}
+  # log: {type: file, path: verdaccio.log, level: info}
 
 persistence:
   enabled: true
