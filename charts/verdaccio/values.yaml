@@ -242,3 +242,6 @@ secrets:
   #   password: "test"
   # - username: "blah"
   #   password: "blah"
+
+# Annotations to set on the deployment
+annotations: {}
