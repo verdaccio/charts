@@ -82,7 +82,8 @@ The following table lists the configurable parameters of the Verdaccio chart
 and their default values.
 
 | Parameter                          | Description                                                                      | Default                        |
-| ---------------------------------- | -------------------------------------------------------------------------------- | ------------------------------ |
+|------------------------------------| -------------------------------------------------------------------------------- | ------------------------------ |
+| `annotations`                      | Annotations to set on the deployment                                             | `{}`                           |
 | `affinity`                         | Affinity for pod assignment                                                      | `{}`                           |
 | `existingConfigMap`                | Name of custom ConfigMap to use                                                  | `false`                        |
 | `image.pullPolicy`                 | Image pull policy                                                                | `IfNotPresent`                 |
