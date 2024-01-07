@@ -8,7 +8,7 @@
 ```
 $ helm repo add verdaccio https://charts.verdaccio.org
 $ helm repo update
-$ helm install verdaccio/verdaccio
+$ helm install verdaccio verdaccio/verdaccio
 ```
 
 > ⚠️ If you are using **stable/verdaccio** chart, [be aware is deprecated](https://github.com/helm/charts/pull/21929), forward all new PR and or issues to this repository.
@@ -49,7 +49,7 @@ helm install npm verdaccio/verdaccio
 
 ```bash
 # Helm v3+
-helm install npm --set image.tag=5.15.3 verdaccio/verdaccio
+helm install npm --set image.tag=5.29.0 verdaccio/verdaccio
 ```
 
 ### Upgrading Verdaccio
@@ -83,12 +83,13 @@ and their default values.
 
 | Parameter                          | Description                                                                      | Default                        |
 | ---------------------------------- | -------------------------------------------------------------------------------- | ------------------------------ |
+| `annotations`                      | Annotations to set on the deployment                                             | `{}`                           |
 | `affinity`                         | Affinity for pod assignment                                                      | `{}`                           |
 | `existingConfigMap`                | Name of custom ConfigMap to use                                                  | `false`                        |
 | `image.pullPolicy`                 | Image pull policy                                                                | `IfNotPresent`                 |
 | `image.pullSecrets`                | Image pull secrets                                                               | `[]`                           |
 | `image.repository`                 | Verdaccio container image repository                                             | `verdaccio/verdaccio`          |
-| `image.tag`                        | Verdaccio container image tag                                                    | `5.15.3`                       |
+| `image.tag`                        | Verdaccio container image tag                                                    | `5.21.1`                       |
 | `nodeSelector`                     | Node labels for pod assignment                                                   | `{}`                           |
 | `tolerations`                      | List of node taints to tolerate                                                  | `[]`                           |
 | `persistence.accessMode`           | PVC Access Mode for Verdaccio volume                                             | `ReadWriteOnce`                |
@@ -99,6 +100,7 @@ and their default values.
 | `persistence.storageClass`         | PVC Storage Class for Verdaccio volume                                           | `nil`                          |
 | `persistence.selector`             | Selector to match an existing Persistent Volume                                  | `{}` (evaluated as a template) |
 | `persistence.volumes`              | Additional volumes                                                               | `nil`                          |
+| `topologySpreadConstraints`        | Topology Spread Constraints for pod assignment                                   | `[]`                           |
 | `podLabels`                        | Additional pod labels                                                            | `{}` (evaluated as a template) |
 | `podAnnotations`                   | Annotations to add to each pod                                                   | `{}`                           |
 | `priorityClass.enabled`            | Enable specifying pod priorityClassName                                          | `false`                        |

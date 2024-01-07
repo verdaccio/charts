@@ -1,6 +1,6 @@
 image:
   repository: verdaccio/verdaccio
-  # tag: 5.15.3
+  # tag: 5.21.1
   pullPolicy: IfNotPresent
   pullSecrets: []
     # - dockerhub-secret
@@ -47,6 +47,8 @@ podLabels: {}
 podAnnotations: {}
 
 replicaCount: 1
+
+revisionHistoryLimit: 10
 
 ## Define Probes
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes
@@ -190,8 +192,8 @@ configMap: |
       enabled: true
 
   # log settings
-  logs: {type: stdout, format: pretty, level: http}
-  # logs: {type: file, path: verdaccio.log, level: info}
+  log: {type: stdout, format: pretty, level: http}
+  # log: {type: file, path: verdaccio.log, level: info}
 
 persistence:
   enabled: true
@@ -245,3 +247,10 @@ secrets:
   #   password: "test"
   # - username: "blah"
   #   password: "blah"
+
+# Annotations to set on the deployment
+annotations: {}
+
+## Pod Topology Spread Constraints
+## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/
+topologySpreadConstraints: []

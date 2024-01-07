@@ -4,8 +4,13 @@ metadata:
   name: {{ template "verdaccio.fullname" . }}
   labels:
     {{- include "verdaccio.labels" . | nindent 4 }}
+  {{- with .Values.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   replicas: {{ default 1 .Values.replicaCount }}
+  revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
   selector:
     matchLabels:
       {{- include "verdaccio.selectorLabels" . | nindent 6 }}
@@ -139,4 +144,8 @@ spec:
     {{- end }}
     {{- if .Values.priorityClass.enabled }}
       priorityClassName: {{ .Values.priorityClass.name }}
+    {{- end }}
+    {{- if .Values.topologySpreadConstraints }}
+      topologySpreadConstraints:
+        {{- toYaml .Values.topologySpreadConstraints | nindent 8 }}
     {{- end }}
