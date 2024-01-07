@@ -49,7 +49,7 @@ helm install npm verdaccio/verdaccio
 
 ```bash
 # Helm v3+
-helm install npm --set image.tag=5.21.1 verdaccio/verdaccio
+helm install npm --set image.tag=5.29.0 verdaccio/verdaccio
 ```
 
 ### Upgrading Verdaccio

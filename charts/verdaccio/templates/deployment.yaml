@@ -10,6 +10,7 @@ metadata:
   {{- end }}
 spec:
   replicas: {{ default 1 .Values.replicaCount }}
+  revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
   selector:
     matchLabels:
       {{- include "verdaccio.selectorLabels" . | nindent 6 }}
