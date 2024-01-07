@@ -82,7 +82,7 @@ The following table lists the configurable parameters of the Verdaccio chart
 and their default values.
 
 | Parameter                          | Description                                                                      | Default                        |
-|------------------------------------| -------------------------------------------------------------------------------- | ------------------------------ |
+| ---------------------------------- | -------------------------------------------------------------------------------- | ------------------------------ |
 | `annotations`                      | Annotations to set on the deployment                                             | `{}`                           |
 | `affinity`                         | Affinity for pod assignment                                                      | `{}`                           |
 | `existingConfigMap`                | Name of custom ConfigMap to use                                                  | `false`                        |
@@ -100,6 +100,7 @@ and their default values.
 | `persistence.storageClass`         | PVC Storage Class for Verdaccio volume                                           | `nil`                          |
 | `persistence.selector`             | Selector to match an existing Persistent Volume                                  | `{}` (evaluated as a template) |
 | `persistence.volumes`              | Additional volumes                                                               | `nil`                          |
+| `topologySpreadConstraints`        | Topology Spread Constraints for pod assignment                                   | `[]`                           |
 | `podLabels`                        | Additional pod labels                                                            | `{}` (evaluated as a template) |
 | `podAnnotations`                   | Annotations to add to each pod                                                   | `{}`                           |
 | `priorityClass.enabled`            | Enable specifying pod priorityClassName                                          | `false`                        |

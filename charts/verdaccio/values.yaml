@@ -247,3 +247,7 @@ secrets:
 
 # Annotations to set on the deployment
 annotations: {}
+
+## Pod Topology Spread Constraints
+## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/
+topologySpreadConstraints: []
