@@ -9,8 +9,8 @@ metadata:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-  {{- if not (eq nil .Values.replicaCount) }}
-  replicas: {{ .Values.replicaCount }}
+  {{- if .Values.replicaCountEnabled }}
+  replicas: {{ default 1 .Values.replicaCount }}
   {{- end}}
   revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
   selector:

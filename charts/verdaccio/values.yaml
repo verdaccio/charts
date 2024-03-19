@@ -46,6 +46,7 @@ podLabels: {}
 ##
 podAnnotations: {}
 
+replicaCountEnabled: true
 replicaCount: 1
 
 revisionHistoryLimit: 10
