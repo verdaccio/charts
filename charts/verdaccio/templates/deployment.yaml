@@ -31,6 +31,9 @@ spec:
         {{- if .Values.secretEnvVars }}
         checksum/env-secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
         {{- end }}
+        {{- if .Values.cachingNginx.enabled }}
+        checksum/config-nginx: {{ include (print $.Template.BasePath "/configmap-nginx.yaml") . | sha256sum }}
+        {{- end }}
         {{- include "verdaccio.podAnnotations" . | nindent 8 }}
       labels:
         {{- include "verdaccio.podLabels" . | nindent 8 }}
@@ -46,6 +49,23 @@ spec:
         {{- include "tplvalues.render" (dict "value" . "context" $) | nindent 8 }}
       {{- end }}
       containers:
+        {{- if .Values.cachingNginx.enabled }}
+        - name: {{ template "verdaccio.name" . }}-nginx
+          imagePullPolicy: {{ .Values.cachingNginx.pullPolicy }}
+          image: {{ .Values.cachingNginx.repository }}:{{ .Values.cachingNginx.tag }}
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+            - name: config-volume
+              mountPath: /etc/nginx/conf.d/default.conf
+              subPath: default.conf
+          resources:
+            {{ toYaml .Values.cachingNginx.resources | nindent 12 }}
+          ports:
+            - containerPort: 80
+              name: caching-nginx
+        {{- end }}
         - name: {{ template "verdaccio.name" . }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -121,6 +141,11 @@ spec:
       - name: htpasswd
         secret:
           secretName: {{ include "verdaccio.fullname" . }}-htpasswd
+      {{- end }}
+      {{- if .Values.cachingNginx.enabled }}
+      - name: config-volume
+        configMap:
+          name: {{ include "verdaccio.fullname" . }}-nginx-config
       {{- end }}
       {{- with .Values.persistence.volumes }}
       {{- include "tplvalues.render" (dict "value" . "context" $) | nindent 6 }}

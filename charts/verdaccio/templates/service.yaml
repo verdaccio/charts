@@ -25,7 +25,11 @@ spec:
   {{- end }}
   ports:
     - port: {{ .Values.service.port }}
+      {{- if .Values.cachingNginx.enabled }}
+      targetPort: caching-nginx
+      {{- else }}
       targetPort: http
+      {{- end }}
       protocol: TCP
       name: {{ .Values.service.name }}
       {{- if contains "NodePort" .Values.service.type }}

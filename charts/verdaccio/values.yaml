@@ -255,3 +255,11 @@ annotations: {}
 ## Pod Topology Spread Constraints
 ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/
 topologySpreadConstraints: []
+
+cachingNginx:
+  enabled: false
+  repository: nginx
+  tag: 1.25.0
+  pullPolicy: IfNotPresent
+  proxyCachePath: '/var/cache/nginx levels=1:2 keys_zone=STATIC:100m inactive=12h max_size=1g;'
+  resources: {}
