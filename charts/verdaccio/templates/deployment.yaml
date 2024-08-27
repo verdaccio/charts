@@ -63,6 +63,10 @@ spec:
           ports:
             - containerPort: 4873
               name: http
+            {{- range .Values.extraPorts }}
+            - containerPort: {{ .port }}
+              name: {{ .targetPort }}
+            {{- end }}
           livenessProbe:
             httpGet:
               path: /-/ping
