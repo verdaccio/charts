@@ -255,3 +255,26 @@ annotations: {}
 ## Pod Topology Spread Constraints
 ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/
 topologySpreadConstraints: []
+
+# Extra ports to expose from the pod
+extraPorts: []
+  # Example to add a metrics port to the pod and service
+  # - port: 9090 # Port to expose on the pod
+  #   name: metrics # Name of the port in the service
+  #   targetPort: metrics # Name of the port in the pod and in the targetPort for the service
+  #   protocol: TCP # Optional, defaults to TCP
+  #   nodePort: 30090 # Optional
+
+# Additional manifests to deploy within the chart
+## Can be useful to deploy additional secrets, serviceMonitors, etc
+extraManifests: []
+  # - apiVersion: monitoring.coreos.com/v1
+  #   kind: ServiceMonitor
+  #   metadata:
+  #     name: verdaccio
+  #   spec:
+  #     selector:
+  #       matchLabels:
+  #         app: verdaccio
+  #     endpoints:
+  #     - port: metrics
