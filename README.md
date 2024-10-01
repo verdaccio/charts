@@ -136,6 +136,8 @@ and their default values.
 | `ingress.hosts`                    | List of Ingress Hosts                                                            | `[]`                           |
 | `ingress.paths`                    | List of Ingress Paths                                                            | `["/"]`                        |
 | `ingress.extraPaths`               | List of extra Ingress Paths                                                      | `[]`                           |
+| `extraPorts`                       | List of extra ports to expose from the pods                                      | `[]`                           |
+| `extraManifests`                   | List of extra manifests to deploy within the chart                               | `[]`                           |
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 
