@@ -1,6 +1,6 @@
 image:
   repository: verdaccio/verdaccio
-  # tag: 5.21.1
+  # tag: defaults to appVersion in Chart.yaml
   pullPolicy: IfNotPresent
   pullSecrets: []
     # - dockerhub-secret
