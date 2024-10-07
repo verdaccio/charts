@@ -1,6 +1,6 @@
 image:
   repository: verdaccio/verdaccio
-  # tag: 5.21.1
+  # tag: defaults to appVersion in Chart.yaml
   pullPolicy: IfNotPresent
   pullSecrets: []
     # - dockerhub-secret
@@ -278,3 +278,13 @@ extraManifests: []
   #         app: verdaccio
   #     endpoints:
   #     - port: metrics
+
+# Additional container with caching nginx
+# Can be useful for intensive load
+cachingNginx:
+  enabled: false
+  repository: nginx
+  tag: 1.25.0
+  pullPolicy: IfNotPresent
+  proxyCachePath: '/var/cache/nginx levels=1:2 keys_zone=STATIC:100m inactive=12h max_size=1g;'
+  resources: {}
