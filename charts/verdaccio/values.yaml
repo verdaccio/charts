@@ -5,6 +5,8 @@ image:
   pullSecrets: []
     # - dockerhub-secret
 
+type: deployment
+
 nameOverride: ""
 fullnameOverride: ""
 
