@@ -216,6 +216,10 @@ persistence:
 
   accessMode: ReadWriteOnce
   size: 8Gi
+  annotations: {}
+  # Set it to "keep" to avoid removing PVC during a helm delete operation.
+  # Leaving it empty will delete PVC after the chart has been deleted.
+  resourcePolicy: ""
   ## selector can be used to match an existing PersistentVolume
   ## selector:
   ##   matchLabels:
