@@ -93,12 +93,14 @@ and their default values.
 | `nodeSelector`                     | Node labels for pod assignment                                                   | `{}`                           |
 | `tolerations`                      | List of node taints to tolerate                                                  | `[]`                           |
 | `persistence.accessMode`           | PVC Access Mode for Verdaccio volume                                             | `ReadWriteOnce`                |
+| `persistence.annotations`          | Annotations to add to the PVC                                                    | `{}`                           |
 | `persistence.enabled`              | Enable persistence using PVC                                                     | `true`                         |
 | `persistence.existingClaim`        | Use existing PVC                                                                 | `nil`                          |
 | `persistence.mounts`               | Additional mounts                                                                | `nil`                          |
+| `persistence.resourcePolicy`       | Set "keep" to avoid removing PVC during a helm delete operation                  | `""`                           |
+| `persistence.selector`             | Selector to match an existing Persistent Volume                                  | `{}` (evaluated as a template) |
 | `persistence.size`                 | PVC Storage Request for Verdaccio volume                                         | `8Gi`                          |
 | `persistence.storageClass`         | PVC Storage Class for Verdaccio volume                                           | `nil`                          |
-| `persistence.selector`             | Selector to match an existing Persistent Volume                                  | `{}` (evaluated as a template) |
 | `persistence.volumes`              | Additional volumes                                                               | `nil`                          |
 | `topologySpreadConstraints`        | Topology Spread Constraints for pod assignment                                   | `[]`                           |
 | `podLabels`                        | Additional pod labels                                                            | `{}` (evaluated as a template) |
