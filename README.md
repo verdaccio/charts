@@ -83,6 +83,7 @@ and their default values.
 
 | Parameter                          | Description                                                                      | Default                        |
 | ---------------------------------- | -------------------------------------------------------------------------------- | ------------------------------ |
+| `type`                             | The type of resource to create. Either `deployment` or `statefulset`. Note: Statefulset is primarly useful when Verdaccio is being used as an edge cache | `deployment` |
 | `annotations`                      | Annotations to set on the deployment                                             | `{}`                           |
 | `affinity`                         | Affinity for pod assignment                                                      | `{}`                           |
 | `existingConfigMap`                | Name of custom ConfigMap to use                                                  | `false`                        |
@@ -95,7 +96,7 @@ and their default values.
 | `persistence.accessMode`           | PVC Access Mode for Verdaccio volume                                             | `ReadWriteOnce`                |
 | `persistence.annotations`          | Annotations to add to the PVC                                                    | `{}`                           |
 | `persistence.enabled`              | Enable persistence using PVC                                                     | `true`                         |
-| `persistence.existingClaim`        | Use existing PVC                                                                 | `nil`                          |
+| `persistence.existingClaim`        | Use existing PVC. Ignored when `type` is `statefuleset`                                                                | `nil`                          |
 | `persistence.mounts`               | Additional mounts                                                                | `nil`                          |
 | `persistence.resourcePolicy`       | Set "keep" to avoid removing PVC during a helm delete operation                  | `""`                           |
 | `persistence.selector`             | Selector to match an existing Persistent Volume                                  | `{}` (evaluated as a template) |
@@ -225,7 +226,7 @@ $ helm install npm \
 
 Due to some breaking changes in Selector Labels and Security Contexts in Chart `3.0.0` you will need to migrate when upgrading.
 
-First off, the `securityContext.enabled` field has been removed.  
+First off, the `securityContext.enabled` field has been removed.
 In addition to this, `fsGroup` is not a valid Container Security Context field and has been migrated to the `podSecurityContext` instead.
 
 ```diff
@@ -238,8 +239,8 @@ podSecurityContext:
    runAsUser: 10001
 ```
 
-Secondly, the `apps.v1.Deployment.spec.selector` field is immutable and changes were made to Selector Labels which tries to update this.  
-To get around this, you will need to `kubectl delete deployment $deploymentName` before doing a `helm upgrade`  
+Secondly, the `apps.v1.Deployment.spec.selector` field is immutable and changes were made to Selector Labels which tries to update this.
+To get around this, you will need to `kubectl delete deployment $deploymentName` before doing a `helm upgrade`
 So long as your PVC is not destroyed, the new deployment will be rolled out with the same PVC as before and your data will remain intact.
 
 ### Migrating chart 3.x -> 4.x
