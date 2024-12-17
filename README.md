@@ -135,6 +135,7 @@ and their default values.
 | `secrets.htpasswd`                 | user and password list to generate htpasswd.                                     | `[]`                           |
 | `ingress.enabled`                  | Enable/Disable Ingress                                                           | `false`                        |
 | `ingress.className`                | Ingress Class Name (k8s `>=1.18` required)                                       | `""`                           |
+| `ingress.labels`                   | Ingress Labels                                                                   | `{}`                           |
 | `ingress.annotations`              | Ingress Annotations                                                              | `{}`                           |
 | `ingress.hosts`                    | List of Ingress Hosts                                                            | `[]`                           |
 | `ingress.paths`                    | List of Ingress Paths                                                            | `["/"]`                        |

@@ -84,6 +84,7 @@ ingress:
   # Use this to define, ALB ingress's actions annotation based routing. Ex: for ssl-redirect
   # Ref: https://kubernetes-sigs.github.io/aws-load-balancer-controller/latest/guide/tasks/ssl_redirect/
   extraPaths: []
+  labels: {}
 # hosts:
 #   - npm.blah.com
 # annotations:
