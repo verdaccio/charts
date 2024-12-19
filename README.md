@@ -110,6 +110,7 @@ and their default values.
 | `priorityClass.name`               | PriorityClassName to be specified in pod spec                                    | `""`                           |
 | `replicaCount`                     | Desired number of pods                                                           | `1`                            |
 | `replicaCountEnabled`              | Enable the replicaCount field                                                    | `true`                         |
+| `strategy`                         | The deployment strategy field                                                    | If persistence is enabled, the strategy type is set to `Recreate`, otherwise `RollingUpdate` |
 | `livenessProbe`                    | Configuration of liveness probe                                                  | `{}`                           |
 | `readinessProbe`                   | Configuration of readiness probe                                                 | `{}`                           |
 | `resources`                        | CPU/Memory resource requests/limits                                              | `{}`                           |

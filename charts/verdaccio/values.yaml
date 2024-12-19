@@ -53,6 +53,8 @@ replicaCount: 1
 
 revisionHistoryLimit: 10
 
+strategy: {}
+
 ## Define Probes
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes
 livenessProbe: {}
