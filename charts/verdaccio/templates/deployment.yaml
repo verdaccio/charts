@@ -18,7 +18,11 @@ spec:
     matchLabels:
       {{- include "verdaccio.selectorLabels" . | nindent 6 }}
   strategy:
-    {{- if .Values.persistence.enabled }}
+    {{- if .Values.strategy }}
+      {{- with .Values.strategy }}
+        {{- toYaml . | nindent 4}}
+      {{- end }}
+    {{- else if .Values.persistence.enabled }}
     type: Recreate
     rollingUpdate: null
     {{- else }}
