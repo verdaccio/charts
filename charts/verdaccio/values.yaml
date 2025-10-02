@@ -133,6 +133,13 @@ existingSecret: ""
 # Extra Init Containers - allows yaml definitions
 extraInitContainers: []
 
+# Configure hostAliases to add extra DNS resolutions
+hostAliases: []
+  # - ip: "104.16.24.34"
+  #   hostnames:
+  #     - "registry.npmjs.org"
+
+
 configMap: |
   # This is the config file used for the docker images
   # It allows all users to do anything, so don't use it on production systems.
