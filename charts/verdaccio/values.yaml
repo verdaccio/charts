@@ -133,7 +133,8 @@ existingSecret: ""
 # Extra Init Containers - allows yaml definitions
 extraInitContainers: []
 
-# Configure hostAliases to add extra DNS resolutions
+## Configure hostAliases to add extra DNS resolutions
+## Ref: https://kubernetes.io/docs/tasks/network/customize-hosts-file-for-pods/
 hostAliases: []
   # - ip: "104.16.24.34"
   #   hostnames:
