@@ -264,6 +264,12 @@ secrets:
   #   password: "test"
   # - username: "blah"
   #   password: "blah"
+  # Existing secret containing htpasswd file
+  # If set, the secret will be used instead of generating one from secrets.htpasswd
+  # The secret must contain a key with the htpasswd file content (default key: "htpasswd")
+  existingSecretHtpasswd: ""
+  # Key in the existing secret that contains the htpasswd file content
+  existingSecretHtpasswdKey: "htpasswd"
 
 # Annotations to set on the deployment
 annotations: {}
