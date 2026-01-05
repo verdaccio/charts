@@ -225,6 +225,15 @@ kubectl create secret generic my-htpasswd-secret \
 > `secrets.existingSecretHtpasswd` takes precedence and no secret will be generated
 > from `secrets.htpasswd`.
 
+> **Important**: When using an existing secret, pods will **not** automatically restart
+> when the secret content is updated. This is a limitation of Kubernetes - it doesn't
+> track changes to external secrets. You need to manually trigger a pod restart after
+> updating the secret:
+>
+> ```bash
+> kubectl rollout restart deployment/<release-name>-verdaccio
+> ```
+
 ### Custom ConfigMap
 
 When creating a new chart with this chart as a dependency, CustomConfigMap can
