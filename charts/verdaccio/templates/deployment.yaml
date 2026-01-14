@@ -32,7 +32,9 @@ spec:
     metadata:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        {{- if and .Values.secrets.htpasswd (not .Values.secrets.existingSecretHtpasswd) }}
         checksum/htpasswd-secret: {{ toJson .Values.secrets.htpasswd | sha256sum }}
+        {{- end }}
         {{- if .Values.secretEnvVars }}
         checksum/env-secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
         {{- end }}
@@ -129,10 +131,14 @@ spec:
             - mountPath: /verdaccio/storage
               name: storage
               readOnly: false
-            {{- if .Values.secrets.htpasswd }}
+            {{- if or .Values.secrets.htpasswd .Values.secrets.existingSecretHtpasswd }}
             - mountPath: /verdaccio/storage/htpasswd
               name: htpasswd
+              {{- if .Values.secrets.existingSecretHtpasswd }}
+              subPath: {{ .Values.secrets.existingSecretHtpasswdKey | default "htpasswd" }}
+              {{- else }}
               subPath: htpasswd
+              {{- end }}
               readOnly: true
             {{- end }}
             - mountPath: /verdaccio/conf
@@ -146,10 +152,14 @@ spec:
       - name: config
         configMap:
           name: {{ .Values.existingConfigMap | default (include "verdaccio.fullname" .) }}
-      {{- if .Values.secrets.htpasswd }}
+      {{- if or .Values.secrets.htpasswd .Values.secrets.existingSecretHtpasswd }}
       - name: htpasswd
         secret:
+          {{- if .Values.secrets.existingSecretHtpasswd }}
+          secretName: {{ .Values.secrets.existingSecretHtpasswd }}
+          {{- else }}
           secretName: {{ include "verdaccio.fullname" . }}-htpasswd
+          {{- end }}
       {{- end }}
       {{- if .Values.cachingNginx.enabled }}
       - name: config-volume

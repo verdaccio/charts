@@ -134,6 +134,8 @@ and their default values.
 | `fullnameOverride`                 | Set resource fullname override                                                   | `""`                           |
 | `useSecretHtpasswd`                | Use htpasswd from `.Values.secrets.htpasswd`. This require helm v3.2.0 or above. | `false`                        |
 | `secrets.htpasswd`                 | user and password list to generate htpasswd.                                     | `[]`                           |
+| `secrets.existingSecretHtpasswd`   | Existing secret containing htpasswd file (alternative to `secrets.htpasswd`)     | `""`                           |
+| `secrets.existingSecretHtpasswdKey` | Key in the existing secret that contains the htpasswd file content              | `"htpasswd"`                   |
 | `ingress.enabled`                  | Enable/Disable Ingress                                                           | `false`                        |
 | `ingress.className`                | Ingress Class Name (k8s `>=1.18` required)                                       | `""`                           |
 | `ingress.labels`                   | Ingress Labels                                                                   | `{}`                           |
@@ -190,6 +192,47 @@ secrets:
 
 This config will create a htpasswd file with user "verdaccio", If in config
 'htpasswd' auth is used. You can login using this credentials.
+
+### Use existing secret for htpasswd
+
+Instead of providing plain text credentials in `values.yaml`, you can reference an
+existing Kubernetes secret containing the htpasswd file. This is more secure as it
+avoids storing passwords in plain text in your values files.
+
+When `secrets.existingSecretHtpasswd` is set, the chart will use the specified
+secret instead of generating one from `secrets.htpasswd`. The secret must contain
+a key with the htpasswd file content (default key: `htpasswd`, configurable via
+`secrets.existingSecretHtpasswdKey`).
+
+#### Example
+
+```yaml
+secrets:
+  # Reference an existing secret instead of providing plain text credentials
+  existingSecretHtpasswd: "my-htpasswd-secret"
+  existingSecretHtpasswdKey: "htpasswd"  # Optional, defaults to "htpasswd"
+```
+
+The existing secret should contain the htpasswd file content in the specified key.
+You can create such a secret using:
+
+```bash
+kubectl create secret generic my-htpasswd-secret \
+  --from-file=htpasswd=/path/to/htpasswd
+```
+
+> **Note**: If both `secrets.htpasswd` and `secrets.existingSecretHtpasswd` are set,
+> `secrets.existingSecretHtpasswd` takes precedence and no secret will be generated
+> from `secrets.htpasswd`.
+
+> **Important**: When using an existing secret, pods will **not** automatically restart
+> when the secret content is updated. This is a limitation of Kubernetes - it doesn't
+> track changes to external secrets. You need to manually trigger a pod restart after
+> updating the secret:
+>
+> ```bash
+> kubectl rollout restart deployment/<release-name>-verdaccio
+> ```
 
 ### Custom ConfigMap
 
