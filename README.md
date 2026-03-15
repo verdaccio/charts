@@ -136,6 +136,12 @@ and their default values.
 | `secrets.htpasswd`                 | user and password list to generate htpasswd.                                     | `[]`                           |
 | `secrets.existingSecretHtpasswd`   | Existing secret containing htpasswd file (alternative to `secrets.htpasswd`)     | `""`                           |
 | `secrets.existingSecretHtpasswdKey` | Key in the existing secret that contains the htpasswd file content              | `"htpasswd"`                   |
+| `gatewayApi.enabled`               | Enable/Disable Gateway API HTTPRoute (alternative to Ingress)                    | `false`                        |
+| `gatewayApi.parentRefs`            | List of parent Gateway references                                                | `[]`                           |
+| `gatewayApi.hostnames`             | List of hostnames for the HTTPRoute                                              | `[]`                           |
+| `gatewayApi.annotations`           | HTTPRoute Annotations                                                            | `{}`                           |
+| `gatewayApi.labels`                | HTTPRoute Labels                                                                 | `{}`                           |
+| `gatewayApi.rules`                 | Custom HTTPRoute routing rules. Defaults to PathPrefix `/` if not set            | `nil`                          |
 | `ingress.enabled`                  | Enable/Disable Ingress                                                           | `false`                        |
 | `ingress.className`                | Ingress Class Name (k8s `>=1.18` required)                                       | `""`                           |
 | `ingress.labels`                   | Ingress Labels                                                                   | `{}`                           |
@@ -233,6 +239,24 @@ kubectl create secret generic my-htpasswd-secret \
 > ```bash
 > kubectl rollout restart deployment/<release-name>-verdaccio
 > ```
+
+### Gateway API (HTTPRoute)
+
+As an alternative to traditional Ingress, this chart supports creating an [HTTPRoute](https://gateway-api.sigs.k8s.io/) resource for use with the Gateway API. This requires a Gateway API implementation (e.g., Envoy Gateway, Istio, Cilium, nginx-gateway-fabric) and a `Gateway` resource already deployed in your cluster.
+
+#### Example
+
+```yaml
+gatewayApi:
+  enabled: true
+  parentRefs:
+    - name: my-gateway
+      namespace: default
+  hostnames:
+    - npm.example.com
+```
+
+> **Note**: The chart only creates an `HTTPRoute` — the `Gateway` resource itself should be managed separately as cluster infrastructure. Both `ingress` and `gatewayApi` can coexist if needed during migration.
 
 ### Custom ConfigMap
 
