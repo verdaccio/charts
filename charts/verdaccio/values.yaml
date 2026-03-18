@@ -96,6 +96,32 @@ ingress:
 #     hosts:
 #       - npm.blah.com
 
+## Gateway API - HTTPRoute
+## Ref: https://gateway-api.sigs.k8s.io/
+## This creates an HTTPRoute resource as an alternative to Ingress
+gatewayApi:
+  enabled: false
+  ## Reference to an existing Gateway
+  ## Ref: https://gateway-api.sigs.k8s.io/reference/spec/#gateway.networking.k8s.io/v1.ParentReference
+  parentRefs: []
+    # - name: my-gateway
+    #   namespace: default
+    #   sectionName: https
+  ## Hostnames for the HTTPRoute
+  hostnames: []
+    # - npm.example.com
+  annotations: {}
+  labels: {}
+  ## Custom routing rules. If not set, a default rule matching PathPrefix "/" is created
+  # rules:
+  #   - matches:
+  #       - path:
+  #           type: PathPrefix
+  #           value: /
+  #     backendRefs:
+  #       - name: my-service
+  #         port: 4873
+
 ## Service account
 serviceAccount:
   # Specifies whether a service account should be created
