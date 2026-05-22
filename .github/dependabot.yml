@@ -4,3 +4,12 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    cooldown:
+      default-days: 15
+      semver-major-days: 15
+      semver-minor-days: 15
+      semver-patch-days: 15
+    groups:
+      github-actions:
+        patterns:
+          - "*"
