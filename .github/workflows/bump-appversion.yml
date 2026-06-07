@@ -1,0 +1,109 @@
+name: Bump Verdaccio appVersion
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 6 * * 1' # Mondays 06:00 UTC
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  # Decide whether the chart is behind the latest published verdaccio.
+  # Runs freely (no gate); only emits a bump level when one is needed.
+  check:
+    name: Check latest verdaccio
+    runs-on: ubuntu-latest
+    if: github.repository == 'verdaccio/charts'
+    outputs:
+      level: ${{ steps.bump.outputs.level }}
+      latest: ${{ steps.bump.outputs.latest }}
+      new_version: ${{ steps.bump.outputs.new_version }}
+      cur_app: ${{ steps.bump.outputs.cur_app }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Setup Node
+        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
+        with:
+          node-version: 22
+
+      - name: Compute version bump
+        id: bump
+        run: |
+          CHART=charts/verdaccio/Chart.yaml
+          export CUR_APP=$(grep -E '^appVersion:' "$CHART" | awk '{print $2}' | tr -d '"')
+          export CUR_VER=$(grep -E '^version:' "$CHART" | awk '{print $2}' | tr -d '"')
+          export LATEST=$(npm view verdaccio version)
+          echo "chart appVersion=$CUR_APP version=$CUR_VER | latest verdaccio=$LATEST"
+          node -e '
+            const cur = process.env.CUR_APP.split(".").map(Number);
+            const lat = process.env.LATEST.split("-")[0].split(".").map(Number);
+            const ver = process.env.CUR_VER.split(".").map(Number);
+            let level = "none";
+            if (lat[0] > cur[0]) level = "major";
+            else if (lat[0] === cur[0] && lat[1] > cur[1]) level = "minor";
+            else if (lat[0] === cur[0] && lat[1] === cur[1] && lat[2] > cur[2]) level = "patch";
+            let [a, b, c] = ver;
+            if (level === "major") { a++; b = 0; c = 0; }
+            else if (level === "minor") { b++; c = 0; }
+            else if (level === "patch") { c++; }
+            const newVer = a + "." + b + "." + c;
+            const fs = require("fs");
+            fs.appendFileSync(process.env.GITHUB_OUTPUT,
+              `level=${level}\nlatest=${process.env.LATEST}\nnew_version=${newVer}\ncur_app=${process.env.CUR_APP}\n`);
+            console.log(`-> ${level} bump; chart version ${process.env.CUR_VER} -> ${newVer}`);
+          '
+
+  # Open the bump PR. Protected by the `charts` environment, so it only runs
+  # after manual approval — and only when `check` found a newer version.
+  pr:
+    name: Open bump PR
+    needs: check
+    if: needs.check.outputs.level != 'none'
+    runs-on: ubuntu-latest
+    environment: charts
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Update Chart.yaml and open PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LATEST: ${{ needs.check.outputs.latest }}
+          NEW_VERSION: ${{ needs.check.outputs.new_version }}
+          LEVEL: ${{ needs.check.outputs.level }}
+          CUR_APP: ${{ needs.check.outputs.cur_app }}
+        run: |
+          set -euo pipefail
+          CHART=charts/verdaccio/Chart.yaml
+          BRANCH="bump/verdaccio-${LATEST}"
+
+          # Skip if an open PR for this version already exists.
+          if [ "$(gh pr list --head "$BRANCH" --state open --json number --jq 'length')" != "0" ]; then
+            echo "An open PR for $BRANCH already exists — nothing to do."
+            exit 0
+          fi
+
+          sed -i -E "s/^appVersion:.*/appVersion: ${LATEST}/" "$CHART"
+          sed -i -E "s/^version:.*/version: ${NEW_VERSION}/" "$CHART"
+
+          git config user.name "verdacciopack"
+          git config user.email "verdaccio.npm@gmail.com"
+          git switch -c "$BRANCH"
+          git add "$CHART"
+          git commit -m "chore: bump verdaccio to ${LATEST} (${LEVEL})"
+          git push -u origin "$BRANCH"
+
+          gh pr create \
+            --base master \
+            --head "$BRANCH" \
+            --title "chore: bump verdaccio appVersion to ${LATEST}" \
+            --body "Automated bump of the Verdaccio chart.
+
+          - \`appVersion\`: \`${CUR_APP}\` → \`${LATEST}\` (a **${LEVEL}** update)
+          - chart \`version\`: bumped **${LEVEL}** → \`${NEW_VERSION}\`
+
+          Source of truth: the \`latest\` dist-tag of [\`verdaccio\`](https://www.npmjs.com/package/verdaccio)."
