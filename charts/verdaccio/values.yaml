@@ -51,6 +51,23 @@ podAnnotations: {}
 replicaCountEnabled: true
 replicaCount: 1
 
+## Horizontal Pod Autoscaler
+## Ref: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+## When enabled, the `replicas` field is omitted from the Deployment/StatefulSet so the
+## HPA owns the replica count. This avoids a GitOps controller (e.g. ArgoCD) and the HPA
+## fighting over the replica count.
+## Note: scaling beyond one replica with `persistence.enabled` requires a `type: statefulset`
+## (each pod gets its own volume via volumeClaimTemplates) or a ReadWriteMany storage class.
+autoscaling:
+  enabled: false
+  minReplicas: 2
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+  ## Scaling behavior policies (autoscaling/v2)
+  ## Ref: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/#configurable-scaling-behavior
+  behavior: {}
+
 revisionHistoryLimit: 10
 
 strategy: {}

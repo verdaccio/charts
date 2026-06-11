@@ -110,6 +110,12 @@ and their default values.
 | `priorityClass.name`               | PriorityClassName to be specified in pod spec                                    | `""`                           |
 | `replicaCount`                     | Desired number of pods                                                           | `1`                            |
 | `replicaCountEnabled`              | Enable the replicaCount field                                                    | `true`                         |
+| `autoscaling.enabled`              | Enable the HorizontalPodAutoscaler (omits `replicas` so the HPA owns it)         | `false`                        |
+| `autoscaling.minReplicas`          | Minimum number of replicas                                                       | `2`                            |
+| `autoscaling.maxReplicas`          | Maximum number of replicas                                                       | `5`                            |
+| `autoscaling.targetCPUUtilizationPercentage`    | Target CPU utilization percentage                                   | `80`                           |
+| `autoscaling.targetMemoryUtilizationPercentage` | Target memory utilization percentage                                | none                           |
+| `autoscaling.behavior`             | Scaling behavior policies for the HPA                                            | `{}`                           |
 | `strategy`                         | The deployment strategy field                                                    | If persistence is enabled, the strategy type is set to `Recreate`, otherwise `RollingUpdate` |
 | `livenessProbe`                    | Configuration of liveness probe                                                  | `{}`                           |
 | `readinessProbe`                   | Configuration of readiness probe                                                 | `{}`                           |
