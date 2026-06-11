@@ -53,6 +53,13 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
+Workload kind (Deployment or StatefulSet) based on .Values.type
+*/}}
+{{- define "verdaccio.workloadKind" -}}
+{{- if eq .Values.type "statefulset" }}StatefulSet{{ else }}Deployment{{ end }}
+{{- end }}
+
+{{/*
 Create the name of the service account to use
 */}}
 {{- define "verdaccio.serviceAccountName" -}}
