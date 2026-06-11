@@ -75,8 +75,8 @@ autoscaling:
 ## `minAvailable` and `maxUnavailable` are mutually exclusive; set only one.
 podDisruptionBudget:
   enabled: false
-  minAvailable: 1
-  # maxUnavailable: 1
+  # minAvailable: 1
+  maxUnavailable: 1
 
 revisionHistoryLimit: 10
 
