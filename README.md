@@ -116,6 +116,9 @@ and their default values.
 | `autoscaling.targetCPUUtilizationPercentage`    | Target CPU utilization percentage                                   | `80`                           |
 | `autoscaling.targetMemoryUtilizationPercentage` | Target memory utilization percentage                                | none                           |
 | `autoscaling.behavior`             | Scaling behavior policies for the HPA                                            | `{}`                           |
+| `podDisruptionBudget.enabled`      | Enable a PodDisruptionBudget                                                     | `false`                        |
+| `podDisruptionBudget.minAvailable`    | Minimum number/percentage of pods that must remain available                  | `1`                            |
+| `podDisruptionBudget.maxUnavailable`  | Maximum number/percentage of pods that can be unavailable (mutually exclusive with `minAvailable`) | none           |
 | `strategy`                         | The deployment strategy field                                                    | If persistence is enabled, the strategy type is set to `Recreate`, otherwise `RollingUpdate` |
 | `livenessProbe`                    | Configuration of liveness probe                                                  | `{}`                           |
 | `readinessProbe`                   | Configuration of readiness probe                                                 | `{}`                           |

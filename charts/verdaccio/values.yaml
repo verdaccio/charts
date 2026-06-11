@@ -68,6 +68,16 @@ autoscaling:
   ## Ref: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/#configurable-scaling-behavior
   behavior: {}
 
+## Pod Disruption Budget
+## Ref: https://kubernetes.io/docs/tasks/run-application/configure-pdb/
+## Keeps a minimum number of pods available during voluntary disruptions
+## (node drains, upgrades). Only meaningful with more than one replica.
+## `minAvailable` and `maxUnavailable` are mutually exclusive; set only one.
+podDisruptionBudget:
+  enabled: false
+  minAvailable: 1
+  # maxUnavailable: 1
+
 revisionHistoryLimit: 10
 
 strategy: {}
