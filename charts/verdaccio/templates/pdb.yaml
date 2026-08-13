@@ -1,5 +1,15 @@
 {{- if .Values.podDisruptionBudget.enabled }}
+{{- if and .Values.podDisruptionBudget.minAvailable .Values.podDisruptionBudget.maxUnavailable }}
+{{- fail "podDisruptionBudget: minAvailable and maxUnavailable are mutually exclusive, set only one" }}
+{{- end }}
+{{- if and (not .Values.podDisruptionBudget.minAvailable) (not .Values.podDisruptionBudget.maxUnavailable) }}
+{{- fail "podDisruptionBudget: one of minAvailable or maxUnavailable must be set" }}
+{{- end }}
+{{- if semverCompare ">=1.21-0" .Capabilities.KubeVersion.GitVersion }}
 apiVersion: policy/v1
+{{- else }}
+apiVersion: policy/v1beta1
+{{- end }}
 kind: PodDisruptionBudget
 metadata:
   name: {{ template "verdaccio.fullname" . }}

@@ -1,4 +1,10 @@
 {{- if .Values.autoscaling.enabled }}
+{{- if not (semverCompare ">=1.23-0" .Capabilities.KubeVersion.GitVersion) }}
+{{- fail "autoscaling requires Kubernetes >= 1.23 (autoscaling/v2)" }}
+{{- end }}
+{{- if and (not .Values.autoscaling.targetCPUUtilizationPercentage) (not .Values.autoscaling.targetMemoryUtilizationPercentage) }}
+{{- fail "autoscaling: at least one of targetCPUUtilizationPercentage or targetMemoryUtilizationPercentage must be set" }}
+{{- end }}
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
