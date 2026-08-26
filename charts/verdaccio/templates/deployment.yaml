@@ -10,9 +10,11 @@ metadata:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
+  {{- if not .Values.autoscaling.enabled }}
   {{- if .Values.replicaCountEnabled }}
   replicas: {{ .Values.replicaCount }}
-  {{- end}}
+  {{- end }}
+  {{- end }}
   revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
   selector:
     matchLabels:
