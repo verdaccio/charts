@@ -11,11 +11,13 @@ metadata:
   {{- end }}
 spec:
   serviceName: {{ template "verdaccio.fullname" . }}
+  {{- if not .Values.autoscaling.enabled }}
   {{- if .Values.replicaCountEnabled }}
   replicas: {{ .Values.replicaCount }}
   {{- else }}
   replicas: 1
-  {{- end}}
+  {{- end }}
+  {{- end }}
   selector:
     matchLabels:
       {{- include "verdaccio.selectorLabels" . | nindent 6 }}
