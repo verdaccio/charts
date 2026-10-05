@@ -56,7 +56,7 @@ spec:
           {{- range $p := $paths }}
           - path: {{ $p }}
             {{- if semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion }}
-            pathType: Prefix
+            pathType: {{ $.Values.ingress.pathType | default "Prefix" }}
             {{- end }}
             backend:
               {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
@@ -75,7 +75,7 @@ spec:
         paths:
         {{- range $p := $paths }}
           - path: {{ $p }}
-            pathType: Prefix
+            pathType: {{ $.Values.ingress.pathType | default "Prefix" }}
             backend:
               {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
               service:

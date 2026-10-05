@@ -172,6 +172,7 @@ and their default values.
 | `ingress.annotations`              | Ingress Annotations                                                              | `{}`                           |
 | `ingress.hosts`                    | List of Ingress Hosts                                                            | `[]`                           |
 | `ingress.paths`                    | List of Ingress Paths                                                            | `["/"]`                        |
+| `ingress.pathType` | Path type for `ingress.paths`, with or without hosts | `Prefix` |
 | `ingress.extraPaths`               | List of extra Ingress Paths                                                      | `[]`                           |
 | `extraPorts`                       | List of extra ports to expose from the pods                                      | `[]`                           |
 | `extraManifests`                   | List of extra manifests to deploy within the chart                               | `[]`                           |
@@ -198,6 +199,20 @@ $ helm install npm -f values.yaml verdaccio/verdaccio
 ```
 
 > **Tip**: You can use the default [values.yaml](charts/verdaccio/values.yaml)
+
+### Ingress paths
+
+Set `ingress.pathType` to `Prefix`, `Exact`, or `ImplementationSpecific` for
+`ingress.paths`. The default is `Prefix`. For an ingress controller that requires
+controller-specific wildcard paths, use:
+
+```yaml
+ingress:
+  enabled: true
+  pathType: ImplementationSpecific
+  paths:
+    - /*
+```
 
 ### Pinning an image by digest
 
