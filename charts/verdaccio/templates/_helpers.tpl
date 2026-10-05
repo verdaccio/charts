@@ -176,3 +176,21 @@ imagePullSecrets:
     {{- end }}
   {{- end }}
 {{- end -}}
+
+{{/* Explicit port prevents Kubernetes service links from overriding the image default. */}}
+{{- define "verdaccio.env" -}}
+{{- $extra := include "tplvalues.render" (dict "value" .Values.extraEnvVars "context" .) | fromYamlArray -}}
+{{- $hasPort := false -}}
+{{- range $extra -}}
+{{- if eq .name "VERDACCIO_PORT" -}}
+{{- $hasPort = true -}}
+{{- end -}}
+{{- end -}}
+{{- if not $hasPort }}
+- name: VERDACCIO_PORT
+  value: "4873"
+{{- end }}
+{{- with $extra }}
+{{ toYaml . }}
+{{- end }}
+{{- end -}}
