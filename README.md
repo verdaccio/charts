@@ -148,7 +148,7 @@ and their default values.
 | `service.type`                     | Type of service to create                                                        | `ClusterIP`                    |
 | `serviceAccount.create`            | Create service account                                                           | `false`                        |
 | `serviceAccount.name`              | Service account Name                                                             | none                           |
-| `extraEnvVars`                     | Define environment variables to be passed to the container                       | `[]`                           |
+| `extraEnvVars`                     | Additional environment variables (template expressions supported); `VERDACCIO_PORT=4873` is always supplied unless explicitly overridden here                       | `[]`                           |
 | `secretEnvVars`                    | Define sensitive environment variables to be passed to the container             | `{}`                           |
 | `existingSecret`                   | Existing secret containing environment variables to be passed to the container   | `""`                           |
 | `extraInitContainers`              | Define additional initContainers to be added to the deployment                   | `[]`                           |

@@ -118,10 +118,8 @@ spec:
             - mountPath: /verdaccio/conf
               name: config
               readOnly: true
-          {{- with .Values.extraEnvVars }}
           env:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
+            {{- include "verdaccio.env" . | nindent 12 }}
       volumes:
       - name: config
         configMap:
