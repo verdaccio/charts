@@ -103,6 +103,7 @@ and their default values.
 | `image.pullSecrets`                | Image pull secrets                                                               | `[]`                           |
 | `image.repository`                 | Verdaccio container image repository                                             | `verdaccio/verdaccio`          |
 | `image.tag`                        | Verdaccio container image tag. Also used as `app.kubernetes.io/version` label when set | defaults to `appVersion` in Chart.yaml |
+| `image.digest` | Immutable image digest (for example `sha256:…`); takes precedence over the tag for the image, without changing the version label | `""` |
 | `nodeSelector`                     | Node labels for pod assignment                                                   | `{}`                           |
 | `tolerations`                      | List of node taints to tolerate                                                  | `[]`                           |
 | `persistence.accessMode`           | PVC Access Mode for Verdaccio volume                                             | `ReadWriteOnce`                |
@@ -194,6 +195,12 @@ $ helm install npm -f values.yaml verdaccio/verdaccio
 ```
 
 > **Tip**: You can use the default [values.yaml](charts/verdaccio/values.yaml)
+
+### Pinning an image by digest
+
+Set `image.digest` to the image's `sha256:...` digest to deploy an immutable image.
+The chart renders `repository@digest`; `image.tag` (or `appVersion` when omitted)
+continues to supply the version label. Do not put the digest in `image.tag`.
 
 ### Generate htpasswd using helm
 
