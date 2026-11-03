@@ -3,6 +3,24 @@ name: Lint and Test Charts
 on: pull_request
 
 jobs:
+  render-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - name: Set up Helm
+        uses: azure/setup-helm@9bc31f4ebc9c6b171d7bfbaa5d006ae7abdb4310 # v5.0.1
+        with:
+          version: v3.4.1
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: '3.x'
+      - name: Test rendered manifests
+        run: |
+          pip install -r tests/requirements.txt
+          python -m unittest discover -s tests -v
+
   lint-test:
     runs-on: ubuntu-latest
     steps:

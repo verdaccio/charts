@@ -139,6 +139,7 @@ and their default values.
 | `service.loadBalancerIP`           | IP address to assign to load balancer (if supported)                             | `""`                           |
 | `service.loadBalancerSourceRanges` | List of IP CIDRs allowed access to load balancer (if supported)                  | `[]`                           |
 | `service.port`                     | Service port to expose                                                           | `4873`                         |
+| `service.targetPort` | Destination port number or name; empty selects `http`, or `caching-nginx` when enabled | `""` |
 | `service.nodePort`                 | Service port to expose                                                           | none                           |
 | `service.type`                     | Type of service to create                                                        | `ClusterIP`                    |
 | `serviceAccount.create`            | Create service account                                                           | `false`                        |

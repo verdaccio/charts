@@ -22,6 +22,8 @@ service:
   loadBalancerIP: ""
   loadBalancerSourceRanges: []
   port: 4873
+  # Empty uses http, or caching-nginx when the sidecar is enabled.
+  targetPort: ""
   type: ClusterIP
   # nodePort: 31873
 
