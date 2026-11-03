@@ -88,18 +88,30 @@ strategy: {}
 
 ## Define Probes
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes
-livenessProbe: {}
-  # initialDelaySeconds: 0
-  # periodSeconds: 10
-  # timeoutSeconds: 1
-  # successThreshold: 1
-  # failureThreshold: 3
-readinessProbe: {}
-  # initialDelaySeconds: 0
-  # periodSeconds: 10
-  # timeoutSeconds: 1
-  # successThreshold: 1
-  # failureThreshold: 3
+## Allow about five minutes for startup before liveness/readiness checks begin.
+startupProbe:
+  enabled: true
+  initialDelaySeconds: 0
+  periodSeconds: 10
+  timeoutSeconds: 5
+  successThreshold: 1
+  failureThreshold: 30
+## Tolerate temporary delays before restarting the container.
+livenessProbe:
+  enabled: true
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  timeoutSeconds: 5
+  successThreshold: 1
+  failureThreshold: 6
+## Stop routing traffic before the liveness failure threshold is reached.
+readinessProbe:
+  enabled: true
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  timeoutSeconds: 5
+  successThreshold: 1
+  failureThreshold: 3
 
 resources: {}
   # requests:

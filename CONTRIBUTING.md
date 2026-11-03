@@ -38,10 +38,10 @@ With Helm 3.19 or newer and Python installed, run:
 ```sh
 python -m pip install -r tests/requirements.txt
 python -m unittest discover -s tests -v
-helm lint charts/verdaccio
+helm lint charts/verdaccio --strict
 ```
 
-The render tests check generated Kubernetes manifests. They run separately from the existing chart-testing lint and cluster installation job.
+The render tests check generated Kubernetes manifests, including probe configuration for Deployment and StatefulSet. They run separately from the existing chart-testing lint and cluster installation job.
 
 ### nginx IPv6 validation
 

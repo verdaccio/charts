@@ -84,6 +84,33 @@ Usage:
 {{- end -}}
 
 {{/*
+Health probes shared by Deployment and StatefulSet. Keep fallback values here for
+upgrades using --reuse-values from releases that did not define probe defaults.
+mergeOverwrite preserves explicit false and zero values.
+*/}}
+{{- define "verdaccio.probes" -}}
+{{- $defaults := dict
+  "startupProbe" (dict "enabled" true "initialDelaySeconds" 0 "periodSeconds" 10 "timeoutSeconds" 5 "successThreshold" 1 "failureThreshold" 30)
+  "livenessProbe" (dict "enabled" true "initialDelaySeconds" 5 "periodSeconds" 10 "timeoutSeconds" 5 "successThreshold" 1 "failureThreshold" 6)
+  "readinessProbe" (dict "enabled" true "initialDelaySeconds" 5 "periodSeconds" 10 "timeoutSeconds" 5 "successThreshold" 1 "failureThreshold" 3)
+}}
+{{- range $name, $settings := $defaults }}
+{{- $probe := mergeOverwrite (deepCopy $settings) (index $.Values $name | default dict) }}
+{{- if $probe.enabled }}
+{{ $name }}:
+  httpGet:
+    path: /-/ping
+    port: http
+  initialDelaySeconds: {{ $probe.initialDelaySeconds }}
+  periodSeconds: {{ $probe.periodSeconds }}
+  timeoutSeconds: {{ $probe.timeoutSeconds }}
+  successThreshold: {{ $probe.successThreshold }}
+  failureThreshold: {{ $probe.failureThreshold }}
+{{- end }}
+{{- end }}
+{{- end -}}
+
+{{/*
 Pod Labels
 
 spec:
