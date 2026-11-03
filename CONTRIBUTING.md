@@ -33,7 +33,7 @@ has to be resolved (either discussion or similar always following the code of co
 
 ## Template regression tests
 
-With Helm 3.19 or newer and Python installed, run:
+With Helm 3.4.1 or newer and Python installed, run:
 
 ```sh
 python -m pip install -r tests/requirements.txt
