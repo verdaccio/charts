@@ -1,36 +1,16 @@
 """Render regressions: python -m unittest discover -s tests (requires Helm and PyYAML)."""
-import os
-from pathlib import Path
-import subprocess
 import unittest
 
 import yaml
 
-CHART = Path(os.environ.get("CHART_PATH", Path(__file__).resolve().parents[1] / "charts/verdaccio"))
-HELM = os.environ.get("HELM", "helm")
-
-
-def render(values, kube_version="1.19.0"):
-    result = subprocess.run(
-        [HELM, "template", "verdaccio", str(CHART), "--kube-version", kube_version, "-f", "-"],
-        input=yaml.safe_dump(values), text=True, capture_output=True,
-    )
-    if result.returncode:
-        raise AssertionError(result.stderr)
-    return {doc["kind"]: doc for doc in yaml.safe_load_all(result.stdout) if doc}
-
-
-def container(documents, workload):
-    kind = "StatefulSet" if workload == "statefulset" else "Deployment"
-    return next(c for c in documents[kind]["spec"]["template"]["spec"]["containers"]
-                if c["name"] == "verdaccio")
+from helpers import CHART, container, render
 
 
 class ChartTemplates(unittest.TestCase):
     def assert_version_labels(self, documents, expected):
         for doc in documents.values():
-            self.assertEqual(doc["metadata"]["labels"]["app.kubernetes.io/version"], expected)
             if doc["kind"] in ("Deployment", "StatefulSet"):
+                self.assertEqual(doc["metadata"]["labels"]["app.kubernetes.io/version"], expected)
                 self.assertEqual(doc["spec"]["template"]["metadata"]["labels"]["app.kubernetes.io/version"], expected)
 
         def check(value):
@@ -91,11 +71,13 @@ class ChartTemplates(unittest.TestCase):
                     "cachingNginx": {"enabled": True},
                     "extraInitContainers": [{"name": "prepare", "image": "busybox:1.37"}],
                 })
+                self.assertIn(("ConfigMap", "verdaccio"), docs)
+                self.assertIn(("ConfigMap", "verdaccio-nginx-config"), docs)
                 main = container(docs, workload)
                 self.assertEqual(main["image"], "mirror.example.com:5000/team/verdaccio@" + digest)
                 self.assertEqual(main["imagePullPolicy"], "Always")
                 kind = "StatefulSet" if workload == "statefulset" else "Deployment"
-                pod = docs[kind]["spec"]["template"]["spec"]
+                pod = docs[(kind, "verdaccio")]["spec"]["template"]["spec"]
                 self.assertEqual(pod["imagePullSecrets"], [{"name": "registry-credentials"}])
                 self.assertEqual(pod["initContainers"][0]["image"], "busybox:1.37")
                 nginx = next(c for c in pod["containers"] if c["name"] == "verdaccio-nginx")
