@@ -42,3 +42,20 @@ helm lint charts/verdaccio
 ```
 
 The render tests check generated Kubernetes manifests. They run separately from the existing chart-testing lint and cluster installation job.
+
+The nginx render tests check IPv4/IPv6 configuration parity. The README describes
+additional connectivity and access-control checks to run in a cluster.
+
+With Docker running and support for IPv6-only Docker networks, also run:
+
+```sh
+python tests/nginx_runtime.py
+```
+
+This optional test uses `nginx:1.25.0`, `verdaccio/verdaccio:7.0.0`, and
+`node:24.15.0-alpine` (Docker downloads them if needed). It creates isolated,
+internal networks and temporary containers without publishing host ports, and
+removes them after the run. It reproduces the IPv4-only listener failure and
+checks IPv4/IPv6 connectivity, private package metadata and tarball permissions,
+forged IP headers, request size limits, and IPv4 configuration with IPv6 disabled.
+It does not validate Kubernetes NetworkPolicies or cloud load balancer rules.

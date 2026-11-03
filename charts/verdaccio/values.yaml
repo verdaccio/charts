@@ -362,6 +362,8 @@ extraManifests: []
 # Can be useful for intensive load
 cachingNginx:
   enabled: false
+  # Disable only when the node/container has no IPv6 support.
+  ipv6Enabled: true
   repository: nginx
   tag: 1.25.0
   pullPolicy: IfNotPresent
