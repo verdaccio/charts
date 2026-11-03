@@ -30,3 +30,16 @@ The administrator can merge without the 2 required approvals, but, only with the
 
 The contribution is meant to improve the chart and has to be positive for users. If for some reason, the PR has a `requested changes`
 has to be resolved (either discussion or similar always following the code of conduct guidelines) before merge.
+
+## Template regression tests
+
+With Helm 3.19 or newer and Python installed, run:
+
+```sh
+python -m pip install -r tests/requirements.txt
+python -m unittest discover -s tests -v
+helm lint charts/verdaccio --strict
+```
+
+The render tests cover probe configuration for Deployment and StatefulSet. They
+run separately from chart-testing lint and cluster installation checks.
