@@ -21,7 +21,7 @@ This chart bootstraps a [Verdaccio](https://github.com/verdaccio/verdaccio)
 deployment on a [Kubernetes](https://kubernetes.io) cluster using the
 [Helm](https://helm.sh) package manager.
 
-Every chart release is listed in the [changelog](./CHANGELOG.md).
+Every chart release is listed in the [changelog](https://charts.verdaccio.org/changelog/).
 
 ## Prerequisites
 
@@ -356,8 +356,10 @@ chart `4.36.0`.
 
 ## Changelog
 
-[CHANGELOG.md](./CHANGELOG.md) lists every chart release with its changes. It
-is generated from the commit history by [git-cliff](https://git-cliff.org)
-(`cliff.toml`) and committed by the release workflow after each release, so
+The [changelog](https://charts.verdaccio.org/changelog/) lists every chart
+release with its changes. It is generated from the commit history by
+[git-cliff](https://git-cliff.org) (`cliff.toml`) and published to
+`charts.verdaccio.org` by the release workflow after each release, so
 conventional commit messages (`feat:`, `fix:`, `chore: bump verdaccio ...`) are
-what end up in it.
+what end up in it. The same text is used as the notes of each
+[GitHub release](https://github.com/verdaccio/charts/releases).

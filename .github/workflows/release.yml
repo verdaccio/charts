@@ -90,23 +90,36 @@ jobs:
           cr index -o "$owner" -r "$repo" --push
 
       # The full changelog is rebuilt from the tags, including the one just
-      # created, and committed back to the branch that was released.
+      # created, and published to charts.verdaccio.org (the gh-pages branch,
+      # which this token already writes); master is protected, so nothing is
+      # committed there.
       - name: Generate CHANGELOG.md
         uses: orhun/git-cliff-action@a9a95522b26fe6403f7bb24031f21fb573d0f5ff # v4.9.1
         with:
           config: cliff.toml
           args: --output CHANGELOG.md
 
-      - name: Commit CHANGELOG.md
+      - name: Checkout gh-pages
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: gh-pages
+          path: .gh-pages
+
+      - name: Publish CHANGELOG.md to gh-pages
         env:
           RELEASE: ${{ steps.chart.outputs.release }}
         run: |
           set -euo pipefail
-          if git diff --quiet -- CHANGELOG.md; then
-            echo "CHANGELOG.md is up to date."
+          # Served by GitHub Pages at https://charts.verdaccio.org/changelog/
+          mkdir -p .gh-pages/changelog
+          cp CHANGELOG.md .gh-pages/changelog/index.md
+          cd .gh-pages
+          git add changelog/index.md
+          if git diff --cached --quiet; then
+            echo "Changelog on gh-pages is up to date."
             exit 0
           fi
-          git add CHANGELOG.md
+          git config user.name "verdacciopack"
+          git config user.email "verdacciobot@gmail.com"
           git commit -m "docs: update changelog for ${RELEASE}"
-          git pull --rebase origin "$GITHUB_REF_NAME"
-          git push origin "HEAD:${GITHUB_REF_NAME}"
+          git push --quiet origin HEAD:gh-pages

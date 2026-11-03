@@ -1,14 +1,16 @@
 # git-cliff configuration (https://git-cliff.org/docs/configuration).
-# CHANGELOG.md is regenerated from the git history on every chart release
-# by .github/workflows/release.yml. Do not edit the changelog by hand.
+# CHANGELOG.md is regenerated from the git history on every chart release by
+# .github/workflows/release.yml and published at https://charts.verdaccio.org/changelog/;
+# it is not committed to this branch.
 
 [changelog]
 header = """
 # Changelog
 
 Changes to the Verdaccio Helm chart, grouped by chart release. Generated from
-the commit history by [git-cliff](https://git-cliff.org) on every release;
-manual edits are overwritten."""
+the commit history by [git-cliff](https://git-cliff.org) on every release.
+The same entries are the notes of each
+[GitHub release](https://github.com/verdaccio/charts/releases)."""
 body = """
 {%- if version %}
 ## [{{ version | trim_start_matches(pat="verdaccio-") }}](https://github.com/verdaccio/charts/releases/tag/{{ version }}) - {{ timestamp | date(format="%Y-%m-%d") }}
