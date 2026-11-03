@@ -1,23 +1,8 @@
 """Render regressions for the IPv6 nginx sidecar (requires Helm and PyYAML)."""
 
-import os
-from pathlib import Path
-import subprocess
 import unittest
 
-import yaml
-
-
-CHART = Path(__file__).resolve().parents[1] / "charts" / "verdaccio"
-HELM = os.environ.get("HELM", "helm")
-
-
-def render(values):
-    result = subprocess.run(
-        [HELM, "template", "npm", str(CHART), "-f", "-"],
-        input=yaml.safe_dump(values), text=True, capture_output=True, check=True,
-    )
-    return [doc for doc in yaml.safe_load_all(result.stdout) if doc]
+from helpers import render
 
 
 class NginxIPv6(unittest.TestCase):
@@ -41,14 +26,14 @@ class NginxIPv6(unittest.TestCase):
                 # request handling, auth config, Service and Pod settings are shared.
                 configs = []
                 for documents in (ipv4, dual):
-                    config = next(doc for doc in documents if doc["kind"] == "ConfigMap"
+                    config = next(doc for doc in documents.values() if doc["kind"] == "ConfigMap"
                                   and "default.conf" in doc.get("data", {}))
                     configs.append(config["data"])
-                    service = next(doc for doc in documents if doc["kind"] == "Service")
+                    service = documents[("Service", "verdaccio")]
                     self.assertEqual(service["spec"]["loadBalancerSourceRanges"], ranges)
                     self.assertEqual(service["spec"]["ports"][0]["targetPort"], "caching-nginx")
                     kind = "Deployment" if workload == "deployment" else "StatefulSet"
-                    pod = next(doc for doc in documents if doc["kind"] == kind)
+                    pod = documents[(kind, "verdaccio")]
                     annotations = pod["spec"]["template"]["metadata"]["annotations"]
                     annotations.pop("checksum/config-nginx")
 
@@ -69,7 +54,7 @@ class NginxIPv6(unittest.TestCase):
         disabled_ipv6 = render({"cachingNginx": {"enabled": False, "ipv6Enabled": False}})
         self.assertEqual(default, enabled_ipv6)
         self.assertEqual(default, disabled_ipv6)
-        self.assertFalse(any("default.conf" in doc.get("data", {}) for doc in default))
+        self.assertFalse(any("default.conf" in doc.get("data", {}) for doc in default.values()))
 
 
 if __name__ == "__main__":

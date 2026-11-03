@@ -212,9 +212,11 @@ request size limit, and Verdaccio authentication and package permissions. This
 fixes access through the sidecar when Pods have IPv6 addresses, as reported in
 [#195](https://github.com/verdaccio/charts/issues/195).
 
-If IPv6 is disabled in the node/container kernel, set
-`cachingNginx.ipv6Enabled: false` to keep nginx from trying to open an IPv6 socket.
-An IPv4-only cluster does not necessarily require this setting.
+If the kernel cannot create IPv6 sockets (for example, when booted with
+`ipv6.disable=1`), set `cachingNginx.ipv6Enabled: false`. Disabling IPv6 addresses
+via `net.ipv6.conf.*.disable_ipv6` sysctls does not remove IPv6 socket support
+and does not require this setting. An IPv4-only cluster does not necessarily
+require it either.
 
 On IPv6-only clusters, Verdaccio must also listen on IPv6 so that Kubernetes
 can reach its health probes on port 4873. For images that default to an IPv4
@@ -234,22 +236,7 @@ policies. IPv4 CIDRs do not cover IPv6 clients. This chart does not create a
 NetworkPolicy. The change also does not add IPv6 sources to nginx's trusted
 `X-Real-IP` senders; do not trust `::/0` just to enable IPv6 connectivity.
 
-Validate the deployment in an IPv6-only cluster and a dual-stack cluster:
-
-- Request `/-/ping` through the Service and load balancer over IPv6; it must
-  reach Verdaccio without connection refusals or gateway errors. In dual-stack,
-  repeat over IPv4 and compare results. Check both Deployment and StatefulSet.
-- For a package restricted to a test user, request its metadata and tarball
-  without credentials, with invalid credentials, and as a forbidden user. All
-  must be denied over both families. The authorized user must succeed over both,
-  including after an authorized request, to detect unintended cached access.
-- From allowed and denied source networks, check both the load balancer and any
-  direct Pod access permitted by your network. Network restrictions must reject
-  denied clients over both families. Repeat with forged `X-Real-IP` and
-  `X-Forwarded-For` headers to verify they cannot bypass those restrictions.
-- Send a request exceeding the configured `client_max_body_size`; expect HTTP
-  413 over both families. Verify nginx starts with `ipv6Enabled: false` on hosts
-  without IPv6 support.
+See [CONTRIBUTING.md](CONTRIBUTING.md#nginx-ipv6-validation) for deployment validation checks.
 
 ### Generate htpasswd using helm
 
