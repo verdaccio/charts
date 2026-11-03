@@ -174,6 +174,8 @@ and their default values.
 | `ingress.extraPaths`               | List of extra Ingress Paths                                                      | `[]`                           |
 | `extraPorts`                       | List of extra ports to expose from the pods                                      | `[]`                           |
 | `extraManifests`                   | List of extra manifests to deploy within the chart                               | `[]`                           |
+| `cachingNginx.enabled`             | Enable the nginx proxy sidecar                                                   | `false`                        |
+| `cachingNginx.ipv6Enabled`         | Listen on IPv6 as well as IPv4 when the nginx sidecar is enabled                  | `true`                         |
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 
@@ -201,6 +203,40 @@ $ helm install npm -f values.yaml verdaccio/verdaccio
 Set `image.digest` to the image's `sha256:...` digest to deploy an immutable image.
 The chart renders `repository@digest`; `image.tag` (or `appVersion` when omitted)
 continues to supply the version label. Do not put the digest in `image.tag`.
+
+### nginx sidecar and IPv6
+
+With `cachingNginx.enabled: true`, nginx listens on port 80 for both IPv4 and
+IPv6. Both listeners use the same server and location configuration, upstream,
+request size limit, and Verdaccio authentication and package permissions. This
+fixes access through the sidecar when Pods have IPv6 addresses, as reported in
+[#195](https://github.com/verdaccio/charts/issues/195).
+
+If the kernel cannot create IPv6 sockets (for example, when booted with
+`ipv6.disable=1`), set `cachingNginx.ipv6Enabled: false`. Disabling IPv6 addresses
+via `net.ipv6.conf.*.disable_ipv6` sysctls does not remove IPv6 socket support
+and does not require this setting. An IPv4-only cluster does not necessarily
+require it either.
+
+On IPv6-only clusters, Verdaccio must also listen on IPv6 so that Kubernetes
+can reach its health probes on port 4873. For images that default to an IPv4
+listen address, configure the backend separately:
+
+```yaml
+extraEnvVars:
+  - name: VERDACCIO_ADDRESS
+    value: "[::]"
+```
+
+The additional listener does not create a separate Service or change
+`service.loadBalancerSourceRanges`. To restrict access, configure the intended
+IPv4 and IPv6 source CIDRs in that list when supported by your load balancer,
+and enforce equivalent access through your firewall and Kubernetes network
+policies. IPv4 CIDRs do not cover IPv6 clients. This chart does not create a
+NetworkPolicy. The change also does not add IPv6 sources to nginx's trusted
+`X-Real-IP` senders; do not trust `::/0` just to enable IPv6 connectivity.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md#nginx-ipv6-validation) for deployment validation checks.
 
 ### Generate htpasswd using helm
 
