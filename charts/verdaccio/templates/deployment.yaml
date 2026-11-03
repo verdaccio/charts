@@ -76,7 +76,7 @@ spec:
               name: caching-nginx
         {{- end }}
         - name: {{ template "verdaccio.name" . }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          image: {{ include "verdaccio.image" . | quote }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           {{- if or .Values.secretEnvVars .Values.existingSecret }}
           envFrom:

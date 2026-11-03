@@ -1,24 +1,7 @@
 """Render regressions: python -m unittest discover -s tests (requires Helm and PyYAML)."""
-import os
-from pathlib import Path
-import subprocess
 import unittest
 
-import yaml
-
-CHART = Path(os.environ.get("CHART_PATH", Path(__file__).resolve().parents[1] / "charts/verdaccio"))
-HELM = os.environ.get("HELM", "helm")
-
-
-def render(values, extra_args=()):
-    result = subprocess.run(
-        [HELM, "template", "verdaccio", str(CHART), "-f", "-", *extra_args],
-        input=yaml.safe_dump(values), text=True, capture_output=True,
-    )
-    if result.returncode:
-        raise AssertionError(result.stderr)
-    return {(doc["kind"], doc["metadata"]["name"]): doc
-            for doc in yaml.safe_load_all(result.stdout) if doc}
+from helpers import render
 
 
 class ChartTemplates(unittest.TestCase):

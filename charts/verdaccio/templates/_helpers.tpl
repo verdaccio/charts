@@ -176,3 +176,12 @@ imagePullSecrets:
     {{- end }}
   {{- end }}
 {{- end -}}
+
+{{/* Container image. Keep the version label independent of the digest. */}}
+{{- define "verdaccio.image" -}}
+{{- if .Values.image.digest -}}
+{{- printf "%s@%s" .Values.image.repository .Values.image.digest -}}
+{{- else -}}
+{{- printf "%s:%s" .Values.image.repository (.Values.image.tag | default .Chart.AppVersion) -}}
+{{- end -}}
+{{- end -}}
