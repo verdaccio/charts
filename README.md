@@ -49,7 +49,17 @@ helm install npm verdaccio/verdaccio
 
 ```bash
 # Helm v3+
-helm install npm --set image.tag=6.0.0 verdaccio/verdaccio
+helm install npm --set image.tag=7.0.0 verdaccio/verdaccio
+```
+
+Chart `7.0.0` and later deploy **Verdaccio 7**. To stay on the Verdaccio 6.x
+line, pin the image or the chart:
+
+```bash
+# Verdaccio 6.x image with the current chart
+helm install npm --set image.tag=6.11.1 verdaccio/verdaccio
+# or the last chart of the 4.x series
+helm install npm --version 4.36.0 verdaccio/verdaccio
 ```
 
 ### Upgrading Verdaccio
@@ -323,3 +333,13 @@ So long as your PVC is not destroyed, the new deployment will be rolled out with
 ### Migrating chart 3.x -> 4.x
 
 Due the major release **Verdaccio 5** has some breaking changes to be aware of, please [read the migration guide here](https://verdaccio.org/blog/2021/04/14/verdaccio-5-migration-guide).
+
+### Migrating chart 4.x -> 7.x
+
+Chart `7.0.0` moves the default image to **Verdaccio 7** (`appVersion: 7.0.0`);
+the chart major now follows the Verdaccio major. The chart templates and values
+are unchanged, but Verdaccio 7 has breaking changes for the registry itself:
+read the [Verdaccio 6 to 7 migration guide](https://verdaccio.org/blog/2026/09/27/verdaccio-6-to-7-migration)
+and the [release post](https://verdaccio.org/blog/2026/10/25/verdaccio-7-release)
+before upgrading. To stay on 6.x, pin `image.tag` to a `6.x` version or install
+chart `4.36.0`.
