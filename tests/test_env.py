@@ -1,56 +1,67 @@
-"""Render regressions: python -m unittest discover -s tests (requires Helm and PyYAML)."""
-import os
-from pathlib import Path
-import subprocess
+"""Render regressions for extra environment variables and the default port."""
 import unittest
 
-import yaml
-
-CHART = Path(os.environ.get("CHART_PATH", Path(__file__).resolve().parents[1] / "charts/verdaccio"))
-HELM = os.environ.get("HELM", "helm")
+from helpers import container, render
 
 
-def render(values, kube_version="1.19.0"):
-    result = subprocess.run(
-        [HELM, "template", "verdaccio", str(CHART), "--kube-version", kube_version, "-f", "-"],
-        input=yaml.safe_dump(values), text=True, capture_output=True,
-    )
-    if result.returncode:
-        raise AssertionError(result.stderr)
-    return {doc["kind"]: doc for doc in yaml.safe_load_all(result.stdout) if doc}
-
-
-def container(documents, workload):
-    kind = "StatefulSet" if workload == "statefulset" else "Deployment"
-    return next(c for c in documents[kind]["spec"]["template"]["spec"]["containers"]
-                if c["name"] == "verdaccio")
-
-
-class ChartTemplates(unittest.TestCase):
-    def test_extra_environment_preserves_port_and_renders_templates(self):
+class EnvironmentVariables(unittest.TestCase):
+    def test_default_port_survives_extra_environment(self):
+        cases = (
+            {},
+            {"extraEnvVars": []},
+            {"extraEnvVars": None},
+            {"extraEnvVars": [{"name": "CUSTOM_VAR", "value": "test"}]},
+        )
         for workload in ("deployment", "statefulset"):
-            for extra in ([], [
-                {"name": "VERDACCIO_PUBLIC_URL", "value": "https://{{ .Release.Name }}.example.com"},
-                {"name": "TOKEN", "valueFrom": {"secretKeyRef": {
-                    "name": "{{ .Release.Name }}-credentials", "key": "token"}}},
-            ]):
+            for overrides in cases:
+                with self.subTest(workload=workload, overrides=overrides):
+                    env = container(render({"type": workload, **overrides}), workload)["env"]
+                    expected = [{"name": "VERDACCIO_PORT", "value": "4873"}]
+                    expected.extend(overrides.get("extraEnvVars") or [])
+                    self.assertEqual(env, expected)
+
+    def test_environment_templates_use_chart_context(self):
+        for workload in ("deployment", "statefulset"):
+            with self.subTest(workload=workload):
+                docs = render({
+                    "type": workload,
+                    "service": {"port": 5080},
+                    "extraEnvVars": [
+                        {"name": "VERDACCIO_PUBLIC_URL", "value": "https://{{ .Release.Name }}.example.com"},
+                        {"name": "PORT_ALIAS", "value": "{{ .Values.service.port }}"},
+                        {"name": "TOKEN", "valueFrom": {"secretKeyRef": {
+                            "name": '{{ include "verdaccio.fullname" . }}-credentials',
+                            "key": "{{ .Chart.Name }}-token",
+                        }}},
+                    ],
+                })
+                self.assertEqual(container(docs, workload)["env"], [
+                    {"name": "VERDACCIO_PORT", "value": "4873"},
+                    {"name": "VERDACCIO_PUBLIC_URL", "value": "https://verdaccio.example.com"},
+                    {"name": "PORT_ALIAS", "value": "5080"},
+                    {"name": "TOKEN", "valueFrom": {"secretKeyRef": {
+                        "name": "verdaccio-credentials", "key": "verdaccio-token",
+                    }}},
+                ])
+
+    def test_explicit_port_is_rendered_without_duplicates(self):
+        cases = (
+            ({"name": "VERDACCIO_PORT", "value": "5000"},
+             {"name": "VERDACCIO_PORT", "value": "5000"}),
+            ({"name": "VERDACCIO_PORT", "valueFrom": {
+                "configMapKeyRef": {"name": "ports", "key": "http"}}},
+             {"name": "VERDACCIO_PORT", "valueFrom": {
+                "configMapKeyRef": {"name": "ports", "key": "http"}}}),
+            ({"name": "VERDACCIO_PORT", "value": "{{ .Values.service.port }}"},
+             {"name": "VERDACCIO_PORT", "value": "5080"}),
+            ({"name": '{{ printf "VERDACCIO_%s" "PORT" }}', "value": "5000"},
+             {"name": "VERDACCIO_PORT", "value": "5000"}),
+        )
+        for workload in ("deployment", "statefulset"):
+            for extra, expected in cases:
                 with self.subTest(workload=workload, extra=extra):
-                    env = container(render({"type": workload, "extraEnvVars": extra}), workload)["env"]
-                    ports = [e for e in env if e["name"] == "VERDACCIO_PORT"]
-                    self.assertEqual(ports, [{"name": "VERDACCIO_PORT", "value": "4873"}])
-                    if extra:
-                        self.assertIn({"name": "VERDACCIO_PUBLIC_URL", "value": "https://verdaccio.example.com"}, env)
-                        self.assertIn({"name": "TOKEN", "valueFrom": {"secretKeyRef": {
-                            "name": "verdaccio-credentials", "key": "token"}}}, env)
-
-
-    def test_explicit_port_is_not_duplicated(self):
-        for workload in ("deployment", "statefulset"):
-            for port in ({"value": "5000"}, {"valueFrom": {"configMapKeyRef": {"name": "ports", "key": "http"}}}):
-                with self.subTest(workload=workload, port=port):
-                    extra = [{"name": "VERDACCIO_PORT", **port}]
-                    env = container(render({"type": workload, "extraEnvVars": extra}), workload)["env"]
-                    self.assertEqual(env, extra)
+                    docs = render({"type": workload, "service": {"port": 5080}, "extraEnvVars": [extra]})
+                    self.assertEqual(container(docs, workload)["env"], [expected])
 
 
 if __name__ == "__main__":

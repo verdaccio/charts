@@ -220,6 +220,26 @@ own `pathType`. An omitted, null, or empty value inherits `ingress.pathType`,
 falling back to `Prefix` if that setting is also unset or empty. An explicit
 per-entry value takes precedence. The same Kubernetes 1.18 requirement applies.
 
+### Additional environment variables
+
+`extraEnvVars` supports Helm template expressions in values and `valueFrom`
+references, using the chart context:
+
+```yaml
+extraEnvVars:
+  - name: VERDACCIO_PUBLIC_URL
+    value: "https://{{ .Release.Name }}.example.com"
+  - name: TOKEN
+    valueFrom:
+      secretKeyRef:
+        name: "{{ .Release.Name }}-credentials"
+        key: token
+```
+
+The chart supplies `VERDACCIO_PORT=4873` even when `extraEnvVars` is empty or
+contains other variables. To override it, include a `VERDACCIO_PORT` entry with
+`value` or `valueFrom`; the chart preserves that entry without adding a duplicate.
+
 ### Pinning an image by digest
 
 Set `image.digest` to the image's `sha256:...` digest to deploy an immutable image.
