@@ -6,7 +6,7 @@ from helpers import render
 
 class IngressPathTypes(unittest.TestCase):
     def test_configurable_path_types_with_and_without_hosts(self):
-        for version in ("1.18.0", "1.19.0"):
+        for version in ("1.13.0", "1.17.0", "1.18.0", "1.19.0"):
             for hosts in ([], ["{{ .Release.Name }}.example.com", "other.example.com"]):
                 for path_type in ("Prefix", "Exact", "ImplementationSpecific"):
                     with self.subTest(version=version, hosts=hosts, path_type=path_type):
@@ -14,6 +14,12 @@ class IngressPathTypes(unittest.TestCase):
                             "enabled": True, "hosts": hosts,
                             "paths": ["/*", "/registry"], "pathType": path_type,
                         }}, extra_args=("--kube-version", version))[("Ingress", "verdaccio")]
+                        expected_api_version = (
+                            "extensions/v1beta1" if version == "1.13.0"
+                            else "networking.k8s.io/v1" if version == "1.19.0"
+                            else "networking.k8s.io/v1beta1"
+                        )
+                        self.assertEqual(ingress["apiVersion"], expected_api_version)
                         rules = ingress["spec"]["rules"]
                         self.assertEqual(len(rules), len(hosts) or 1)
                         if hosts:
@@ -27,10 +33,14 @@ class IngressPathTypes(unittest.TestCase):
                             else {"serviceName": "verdaccio", "servicePort": 4873}
                         )
                         for rule in rules:
-                            self.assertEqual(rule["http"]["paths"], [
-                                {"path": path, "pathType": path_type, "backend": expected_backend}
-                                for path in ("/*", "/registry")
-                            ])
+                            paths = rule["http"]["paths"]
+                            self.assertEqual([path["path"] for path in paths], ["/*", "/registry"])
+                            for path in paths:
+                                self.assertEqual(path["backend"], expected_backend)
+                                if version in ("1.13.0", "1.17.0"):
+                                    self.assertNotIn("pathType", path)
+                                else:
+                                    self.assertEqual(path["pathType"], path_type)
 
     def test_default_path_type_remains_prefix(self):
         for hosts in ([], ["registry.example.com"]):

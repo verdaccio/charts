@@ -123,11 +123,12 @@ resources: {}
   #   memory: 512Mi
 
 ingress:
-  pathType: Prefix
   enabled: false
   className: ""
   paths:
     - /
+  # Path type for paths (Kubernetes >= 1.18): Prefix, Exact, or ImplementationSpecific.
+  pathType: Prefix
   # Use this to define, ALB ingress's actions annotation based routing. Ex: for ssl-redirect
   # Ref: https://kubernetes-sigs.github.io/aws-load-balancer-controller/latest/guide/tasks/ssl_redirect/
   extraPaths: []
