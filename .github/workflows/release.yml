@@ -41,35 +41,85 @@ jobs:
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
+      - name: Read chart version
+        id: chart
+        run: |
+          chart_version=$(awk '/^version:/ { print $2; exit }' charts/verdaccio/Chart.yaml)
+          echo "release=verdaccio-${chart_version}" >> "$GITHUB_OUTPUT"
+
+      # Release notes: commits since the previous chart tag, titled with the
+      # tag this run is about to create.
+      - name: Generate release notes
+        uses: orhun/git-cliff-action@a9a95522b26fe6403f7bb24031f21fb573d0f5ff # v4.9.1
+        with:
+          config: cliff.toml
+          args: --unreleased --tag ${{ steps.chart.outputs.release }} --strip all --output .cr-release-notes.md
+
       - name: Package and publish chart
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          RELEASE: ${{ steps.chart.outputs.release }}
         run: |
           set -euo pipefail
 
           owner=$(cut -d '/' -f 1 <<< "$GITHUB_REPOSITORY")
           repo=$(cut -d '/' -f 2 <<< "$GITHUB_REPOSITORY")
           chart="charts/verdaccio"
-          chart_version=$(awk '/^version:/ { print $2; exit }' "$chart/Chart.yaml")
-          release="verdaccio-${chart_version}"
-          asset=".cr-release-packages/verdaccio-${chart_version}.tgz"
-          notes=$(awk -F': ' '/^description:/ { print $2; exit }' "$chart/Chart.yaml")
+          asset=".cr-release-packages/${RELEASE}.tgz"
 
           rm -rf .cr-release-packages .cr-index
           mkdir -p .cr-release-packages .cr-index
 
           cr package "$chart" --package-path .cr-release-packages
 
-          if gh release view "$release" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-            echo "Release $release already exists; skipping release creation."
+          if gh release view "$RELEASE" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release $RELEASE already exists; skipping release creation."
           else
-            gh release create "$release" "$asset" \
+            gh release create "$RELEASE" "$asset" \
               --repo "$GITHUB_REPOSITORY" \
               --target "$GITHUB_SHA" \
-              --title "$release" \
-              --notes "$notes" \
+              --title "$RELEASE" \
+              --notes-file .cr-release-notes.md \
               --latest
           fi
 
+          # Make the tag created by the release visible to git-cliff below.
+          git fetch --tags origin
+
           cr index -o "$owner" -r "$repo" --push
+
+      # The full changelog is rebuilt from the tags, including the one just
+      # created, and published to charts.verdaccio.org (the gh-pages branch,
+      # which this token already writes); master is protected, so nothing is
+      # committed there.
+      - name: Generate CHANGELOG.md
+        uses: orhun/git-cliff-action@a9a95522b26fe6403f7bb24031f21fb573d0f5ff # v4.9.1
+        with:
+          config: cliff.toml
+          args: --output CHANGELOG.md
+
+      - name: Checkout gh-pages
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: gh-pages
+          path: .gh-pages
+
+      - name: Publish CHANGELOG.md to gh-pages
+        env:
+          RELEASE: ${{ steps.chart.outputs.release }}
+        run: |
+          set -euo pipefail
+          # Served by GitHub Pages at https://charts.verdaccio.org/changelog/
+          mkdir -p .gh-pages/changelog
+          cp CHANGELOG.md .gh-pages/changelog/index.md
+          cd .gh-pages
+          git add changelog/index.md
+          if git diff --cached --quiet; then
+            echo "Changelog on gh-pages is up to date."
+            exit 0
+          fi
+          git config user.name "verdacciopack"
+          git config user.email "verdacciobot@gmail.com"
+          git commit -m "docs: update changelog for ${RELEASE}"
+          git push --quiet origin HEAD:gh-pages

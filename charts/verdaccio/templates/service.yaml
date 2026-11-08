@@ -25,7 +25,9 @@ spec:
   {{- end }}
   ports:
     - port: {{ .Values.service.port }}
-      {{- if .Values.cachingNginx.enabled }}
+      {{- if .Values.service.targetPort }}
+      targetPort: {{ .Values.service.targetPort }}
+      {{- else if .Values.cachingNginx.enabled }}
       targetPort: caching-nginx
       {{- else }}
       targetPort: http

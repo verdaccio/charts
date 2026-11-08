@@ -84,6 +84,31 @@ Usage:
 {{- end -}}
 
 {{/*
+Health probes shared by Deployment and StatefulSet. Fallback values cover --reuse-values
+upgrades from releases without probe defaults; one dict per line keeps Helm < 3.6 parsing.
+*/}}
+{{- define "verdaccio.probes" -}}
+{{- $startup := dict "enabled" false "initialDelaySeconds" 0 "periodSeconds" 10 "timeoutSeconds" 5 "successThreshold" 1 "failureThreshold" 30 }}
+{{- $liveness := dict "enabled" true "initialDelaySeconds" 5 "periodSeconds" 10 "timeoutSeconds" 5 "successThreshold" 1 "failureThreshold" 6 }}
+{{- $readiness := dict "enabled" true "initialDelaySeconds" 5 "periodSeconds" 10 "timeoutSeconds" 5 "successThreshold" 1 "failureThreshold" 3 }}
+{{- $defaults := dict "startupProbe" $startup "livenessProbe" $liveness "readinessProbe" $readiness }}
+{{- range $name, $settings := $defaults }}
+{{- $probe := mergeOverwrite (deepCopy $settings) (index $.Values $name | default dict) }}
+{{- if $probe.enabled }}
+{{ $name }}:
+  httpGet:
+    path: /-/ping
+    port: http
+  initialDelaySeconds: {{ $probe.initialDelaySeconds }}
+  periodSeconds: {{ $probe.periodSeconds }}
+  timeoutSeconds: {{ $probe.timeoutSeconds }}
+  successThreshold: {{ $probe.successThreshold }}
+  failureThreshold: {{ $probe.failureThreshold }}
+{{- end }}
+{{- end }}
+{{- end -}}
+
+{{/*
 Pod Labels
 
 spec:
@@ -175,4 +200,13 @@ imagePullSecrets:
   - name: {{ . }}
     {{- end }}
   {{- end }}
+{{- end -}}
+
+{{/* Container image. Keep the version label independent of the digest. */}}
+{{- define "verdaccio.image" -}}
+{{- if .Values.image.digest -}}
+{{- printf "%s@%s" .Values.image.repository .Values.image.digest -}}
+{{- else -}}
+{{- printf "%s:%s" .Values.image.repository (.Values.image.tag | default .Chart.AppVersion) -}}
+{{- end -}}
 {{- end -}}

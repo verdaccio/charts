@@ -67,6 +67,9 @@ data:
   default.conf: |
     server {
       listen 80;
+      {{- if .Values.cachingNginx.ipv6Enabled }}
+      listen [::]:80 ipv6only=on;
+      {{- end }}
       location / {
         proxy_pass http://127.0.0.1:4873;
         proxy_http_version 1.1;

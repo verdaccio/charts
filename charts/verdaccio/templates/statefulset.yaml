@@ -69,7 +69,7 @@ spec:
               name: caching-nginx
         {{- end }}
         - name: {{ template "verdaccio.name" . }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          image: {{ include "verdaccio.image" . | quote }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           {{- if or .Values.secretEnvVars .Values.existingSecret }}
           envFrom:
@@ -89,28 +89,7 @@ spec:
             - containerPort: {{ .port }}
               name: {{ .targetPort }}
             {{- end }}
-          livenessProbe:
-            httpGet:
-              path: /-/ping
-              port: http
-            {{- with .Values.livenessProbe }}
-            initialDelaySeconds: {{ .initialDelaySeconds | default 5 }}
-            periodSeconds: {{ .periodSeconds | default 10 }}
-            timeoutSeconds: {{ .timeoutSeconds | default 1 }}
-            successThreshold: {{ .successThreshold | default 1 }}
-            failureThreshold: {{ .failureThreshold | default 3 }}
-            {{- end }}
-          readinessProbe:
-            httpGet:
-              path: /-/ping
-              port: http
-            {{- with .Values.readinessProbe }}
-            initialDelaySeconds: {{ .initialDelaySeconds | default 5 }}
-            periodSeconds: {{ .periodSeconds | default 10 }}
-            timeoutSeconds: {{ .timeoutSeconds | default 1 }}
-            successThreshold: {{ .successThreshold | default 1 }}
-            failureThreshold: {{ .failureThreshold | default 3 }}
-            {{- end }}
+          {{- include "verdaccio.probes" . | trim | nindent 10 }}
           {{- with .Values.securityContext }}
           securityContext:
             {{- toYaml . | nindent 12 }}

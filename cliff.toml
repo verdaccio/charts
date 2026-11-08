@@ -1,0 +1,49 @@
+# git-cliff configuration (https://git-cliff.org/docs/configuration).
+# CHANGELOG.md is regenerated from the git history on every chart release by
+# .github/workflows/release.yml and published at https://charts.verdaccio.org/changelog/;
+# it is not committed to this branch.
+
+[changelog]
+header = """
+# Changelog
+
+Changes to the Verdaccio Helm chart, grouped by chart release. Generated from
+the commit history by [git-cliff](https://git-cliff.org) on every release.
+The same entries are the notes of each
+[GitHub release](https://github.com/verdaccio/charts/releases)."""
+body = """
+{%- if version %}
+## [{{ version | trim_start_matches(pat="verdaccio-") }}](https://github.com/verdaccio/charts/releases/tag/{{ version }}) - {{ timestamp | date(format="%Y-%m-%d") }}
+{%- else %}
+## Unreleased
+{%- endif %}
+{% for group, commits in commits | group_by(attribute="group") %}
+### {{ group | striptags | trim }}
+{% for commit in commits %}
+- {% if commit.scope %}**{{ commit.scope }}:** {% endif %}{{ commit.message | split(pat="\n") | first | trim | upper_first }}
+{%- endfor %}
+{% endfor %}"""
+trim = false
+# Turn the "(#123)" squash-merge suffix into a link to the pull request.
+postprocessors = [
+  { pattern = '\(#([0-9]+)\)', replace = "([#${1}](https://github.com/verdaccio/charts/pull/${1}))" },
+]
+
+[git]
+conventional_commits = true
+filter_unconventional = false
+split_commits = false
+# The HTML comments only sort the groups; the template strips them.
+commit_parsers = [
+  { message = "^chore: bump verdaccio", group = "<!-- 0 -->Verdaccio updates" },
+  { message = "^feat", group = "<!-- 1 -->Features" },
+  { message = "^fix", group = "<!-- 2 -->Bug fixes" },
+  { message = "^docs?", group = "<!-- 3 -->Documentation" },
+  { message = "^chore\\(deps\\)|^chore: bump chart|^chore: fix release|^docs: update changelog", skip = true },
+  { message = "^Merge (pull request|branch)", skip = true },
+  { message = ".*", group = "<!-- 4 -->Maintenance" },
+]
+filter_commits = false
+tag_pattern = "verdaccio-[0-9]*"
+topo_order = false
+sort_commits = "newest"

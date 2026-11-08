@@ -21,6 +21,8 @@ This chart bootstraps a [Verdaccio](https://github.com/verdaccio/verdaccio)
 deployment on a [Kubernetes](https://kubernetes.io) cluster using the
 [Helm](https://helm.sh) package manager.
 
+Every chart release is listed in the [changelog](https://charts.verdaccio.org/changelog/).
+
 ## Prerequisites
 
 - Kubernetes 1.7+ with Beta APIs enabled
@@ -101,6 +103,7 @@ and their default values.
 | `image.pullSecrets`                | Image pull secrets                                                               | `[]`                           |
 | `image.repository`                 | Verdaccio container image repository                                             | `verdaccio/verdaccio`          |
 | `image.tag`                        | Verdaccio container image tag. Also used as `app.kubernetes.io/version` label when set | defaults to `appVersion` in Chart.yaml |
+| `image.digest` | Immutable image digest (for example `sha256:…`); takes precedence over the tag for the image, without changing the version label | `""` |
 | `nodeSelector`                     | Node labels for pod assignment                                                   | `{}`                           |
 | `tolerations`                      | List of node taints to tolerate                                                  | `[]`                           |
 | `persistence.accessMode`           | PVC Access Mode for Verdaccio volume                                             | `ReadWriteOnce`                |
@@ -130,8 +133,9 @@ and their default values.
 | `podDisruptionBudget.maxUnavailable`  | Maximum number/percentage of pods that can be unavailable                     | `1`                            |
 | `podDisruptionBudget.minAvailable`    | Minimum number/percentage of pods that must remain available (mutually exclusive with `maxUnavailable`) | none         |
 | `strategy`                         | The deployment strategy field                                                    | If persistence is enabled, the strategy type is set to `Recreate`, otherwise `RollingUpdate` |
-| `livenessProbe`                    | Configuration of liveness probe                                                  | `{}`                           |
-| `readinessProbe`                   | Configuration of readiness probe                                                 | `{}`                           |
+| `startupProbe`                     | Optional startup check (Kubernetes 1.18+); see [Health probes](#health-probes)    | disabled; when enabled, 5s timeout, 30 failures every 10s |
+| `livenessProbe`                    | Restart check; see [Health probes](#health-probes)                                | enabled, 5s timeout, 6 failures every 10s |
+| `readinessProbe`                   | Traffic readiness check; see [Health probes](#health-probes)                      | enabled, 5s timeout, 3 failures every 10s |
 | `resources`                        | CPU/Memory resource requests/limits                                              | `{}`                           |
 | `service.annotations`              | Annotations to add to service                                                    | none                           |
 | `service.clusterIP`                | IP address to assign to service                                                  | `""`                           |
@@ -139,6 +143,7 @@ and their default values.
 | `service.loadBalancerIP`           | IP address to assign to load balancer (if supported)                             | `""`                           |
 | `service.loadBalancerSourceRanges` | List of IP CIDRs allowed access to load balancer (if supported)                  | `[]`                           |
 | `service.port`                     | Service port to expose                                                           | `4873`                         |
+| `service.targetPort` | Destination port number or name; empty selects `http`, or `caching-nginx` when enabled | `""` |
 | `service.nodePort`                 | Service port to expose                                                           | none                           |
 | `service.type`                     | Type of service to create                                                        | `ClusterIP`                    |
 | `serviceAccount.create`            | Create service account                                                           | `false`                        |
@@ -170,6 +175,8 @@ and their default values.
 | `ingress.extraPaths`               | List of extra Ingress Paths                                                      | `[]`                           |
 | `extraPorts`                       | List of extra ports to expose from the pods                                      | `[]`                           |
 | `extraManifests`                   | List of extra manifests to deploy within the chart                               | `[]`                           |
+| `cachingNginx.enabled`             | Enable the nginx proxy sidecar                                                   | `false`                        |
+| `cachingNginx.ipv6Enabled`         | Listen on IPv6 as well as IPv4 when the nginx sidecar is enabled                  | `true`                         |
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 
@@ -191,6 +198,95 @@ $ helm install npm -f values.yaml verdaccio/verdaccio
 ```
 
 > **Tip**: You can use the default [values.yaml](charts/verdaccio/values.yaml)
+
+### Pinning an image by digest
+
+Set `image.digest` to the image's `sha256:...` digest to deploy an immutable image.
+The chart renders `repository@digest`; `image.tag` (or `appVersion` when omitted)
+continues to supply the version label. Do not put the digest in `image.tag`.
+
+### nginx sidecar and IPv6
+
+With `cachingNginx.enabled: true`, nginx listens on port 80 for both IPv4 and
+IPv6. Both listeners use the same server and location configuration, upstream,
+request size limit, and Verdaccio authentication and package permissions. This
+fixes access through the sidecar when Pods have IPv6 addresses, as reported in
+[#195](https://github.com/verdaccio/charts/issues/195).
+
+If the kernel cannot create IPv6 sockets (for example, when booted with
+`ipv6.disable=1`), set `cachingNginx.ipv6Enabled: false`. Disabling IPv6 addresses
+via `net.ipv6.conf.*.disable_ipv6` sysctls does not remove IPv6 socket support
+and does not require this setting. An IPv4-only cluster does not necessarily
+require it either.
+
+On IPv6-only clusters, Verdaccio itself must also listen on IPv6: the health
+probes target port 4873 on the Pod IP, not the sidecar. The default image
+(`verdaccio/verdaccio` at the chart `appVersion`) starts with
+`VERDACCIO_ADDRESS=0.0.0.0` and accepts IPv4 connections only, so the Pod never
+becomes Ready until the listen address is changed. Set it through
+`extraEnvVars`; the list replaces the chart default, so keep `VERDACCIO_PORT`:
+
+```yaml
+extraEnvVars:
+  - name: VERDACCIO_PORT
+    value: "4873"
+  - name: VERDACCIO_ADDRESS
+    value: "[::]"
+```
+
+The additional listener does not create a separate Service or change
+`service.loadBalancerSourceRanges`. To restrict access, configure the intended
+IPv4 and IPv6 source CIDRs in that list when supported by your load balancer,
+and enforce equivalent access through your firewall and Kubernetes network
+policies. IPv4 CIDRs do not cover IPv6 clients. This chart does not create a
+NetworkPolicy. The change also does not add IPv6 sources to nginx's trusted
+`X-Real-IP` senders; do not trust `::/0` just to enable IPv6 connectivity.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md#nginx-ipv6-validation) for deployment validation checks.
+
+### Health probes
+
+Deployment and StatefulSet use the same HTTP checks on `/-/ping`:
+
+- `readinessProbe` stops routing new Service traffic to a pod after three consecutive
+  failures. It does not restart the container.
+- `livenessProbe` restarts the container after six consecutive failures, allowing
+  more time to recover from temporary delays than the readiness check.
+- `startupProbe` is disabled by default. When enabled, it allows about five minutes
+  for Verdaccio to start and Kubernetes begins the liveness and readiness checks only
+  after it succeeds; a healthy instance does not wait five minutes. It requires
+  Kubernetes 1.18 or newer.
+
+Liveness and readiness checks allow five seconds for each response, run every ten
+seconds and start five seconds after the container starts; when the startup check is
+enabled they also wait for it to succeed. These defaults replace the previous one-second
+timeout and identical failure thresholds, which restarted Verdaccio under load
+([#90](https://github.com/verdaccio/charts/issues/90),
+[#97](https://github.com/verdaccio/charts/issues/97)). Upgrading changes the pod
+template, so pods are recreated once, and installs that override only some probe keys
+inherit the new values for the rest.
+
+Each probe supports `enabled`, `initialDelaySeconds`, `periodSeconds`, `timeoutSeconds`,
+`successThreshold`, and `failureThreshold`. Existing timing overrides remain supported,
+and `initialDelaySeconds: 0` is preserved. `successThreshold` must be `1` for startup
+and liveness probes, as required by Kubernetes.
+
+For example, to enable the startup check with a longer allowance and tolerate more
+liveness failures:
+
+```yaml
+startupProbe:
+  enabled: true
+  failureThreshold: 60
+livenessProbe:
+  failureThreshold: 9
+```
+
+Set a probe's `enabled` value to `false` to omit it from the pod specification.
+
+Configure CPU and memory requests and limits under `resources` for the expected
+workload. More tolerant probes allow time for recovery but do not remove CPU or
+memory bottlenecks. See the [Kubernetes probe documentation](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/).
 
 ### Generate htpasswd using helm
 
@@ -343,3 +439,13 @@ read the [Verdaccio 6 to 7 migration guide](https://verdaccio.org/blog/2026/09/2
 and the [release post](https://verdaccio.org/blog/2026/10/25/verdaccio-7-release)
 before upgrading. To stay on 6.x, pin `image.tag` to a `6.x` version or install
 chart `4.36.0`.
+
+## Changelog
+
+The [changelog](https://charts.verdaccio.org/changelog/) lists every chart
+release with its changes. It is generated from the commit history by
+[git-cliff](https://git-cliff.org) (`cliff.toml`) and published to
+`charts.verdaccio.org` by the release workflow after each release, so
+conventional commit messages (`feat:`, `fix:`, `chore: bump verdaccio ...`) are
+what end up in it. The same text is used as the notes of each
+[GitHub release](https://github.com/verdaccio/charts/releases).
