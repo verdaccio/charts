@@ -133,7 +133,7 @@ and their default values.
 | `podDisruptionBudget.maxUnavailable`  | Maximum number/percentage of pods that can be unavailable                     | `1`                            |
 | `podDisruptionBudget.minAvailable`    | Minimum number/percentage of pods that must remain available (mutually exclusive with `maxUnavailable`) | none         |
 | `strategy`                         | The deployment strategy field                                                    | If persistence is enabled, the strategy type is set to `Recreate`, otherwise `RollingUpdate` |
-| `startupProbe`                     | Startup check; see [Health probes](#health-probes)                                | enabled, 5s timeout, 30 failures every 10s |
+| `startupProbe`                     | Optional startup check (Kubernetes 1.18+); see [Health probes](#health-probes)    | disabled; when enabled, 5s timeout, 30 failures every 10s |
 | `livenessProbe`                    | Restart check; see [Health probes](#health-probes)                                | enabled, 5s timeout, 6 failures every 10s |
 | `readinessProbe`                   | Traffic readiness check; see [Health probes](#health-probes)                      | enabled, 5s timeout, 3 failures every 10s |
 | `resources`                        | CPU/Memory resource requests/limits                                              | `{}`                           |
@@ -248,36 +248,40 @@ See [CONTRIBUTING.md](CONTRIBUTING.md#nginx-ipv6-validation) for deployment vali
 
 Deployment and StatefulSet use the same HTTP checks on `/-/ping`:
 
-- `startupProbe` allows about five minutes for Verdaccio to start. Kubernetes starts
-  liveness and readiness checks only after the startup check succeeds. A healthy
-  instance can receive traffic as soon as the checks succeed; it does not wait five minutes.
 - `readinessProbe` stops routing new Service traffic to a pod after three consecutive
   failures. It does not restart the container.
 - `livenessProbe` restarts the container after six consecutive failures, allowing
   more time to recover from temporary delays than the readiness check.
+- `startupProbe` is disabled by default. When enabled, it allows about five minutes
+  for Verdaccio to start and Kubernetes begins the liveness and readiness checks only
+  after it succeeds; a healthy instance does not wait five minutes. It requires
+  Kubernetes 1.18 or newer.
 
-All three checks allow five seconds for each response and run every ten seconds.
-Startup checks have no initial delay; liveness and readiness checks have a five-second
-initial delay after startup succeeds. These defaults replace the previous one-second
-timeout and identical liveness/readiness failure thresholds.
+Liveness and readiness checks allow five seconds for each response, run every ten
+seconds and start five seconds after the container starts (or after the startup check
+succeeds, when enabled). These defaults replace the previous one-second timeout and
+identical failure thresholds, which restarted Verdaccio under load
+([#90](https://github.com/verdaccio/charts/issues/90),
+[#97](https://github.com/verdaccio/charts/issues/97)). Upgrading changes the pod
+template, so pods are recreated once.
 
 Each probe supports `enabled`, `initialDelaySeconds`, `periodSeconds`, `timeoutSeconds`,
 `successThreshold`, and `failureThreshold`. Existing timing overrides remain supported,
 and `initialDelaySeconds: 0` is preserved. `successThreshold` must be `1` for startup
 and liveness probes, as required by Kubernetes.
 
-For example, to allow a longer startup and tolerate more liveness failures:
+For example, to enable the startup check with a longer allowance and tolerate more
+liveness failures:
 
 ```yaml
 startupProbe:
+  enabled: true
   failureThreshold: 60
 livenessProbe:
   failureThreshold: 9
 ```
 
 Set a probe's `enabled` value to `false` to omit it from the pod specification.
-For example, `startupProbe.enabled: false` disables the startup check, so liveness
-and readiness checks begin after their own initial delays.
 
 Configure CPU and memory requests and limits under `resources` for the expected
 workload. More tolerant probes allow time for recovery but do not remove CPU or

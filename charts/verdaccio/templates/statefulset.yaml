@@ -89,7 +89,7 @@ spec:
             - containerPort: {{ .port }}
               name: {{ .targetPort }}
             {{- end }}
-          {{- include "verdaccio.probes" . | nindent 10 }}
+          {{- include "verdaccio.probes" . | trim | nindent 10 }}
           {{- with .Values.securityContext }}
           securityContext:
             {{- toYaml . | nindent 12 }}

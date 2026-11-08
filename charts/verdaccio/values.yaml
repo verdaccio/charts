@@ -88,9 +88,10 @@ strategy: {}
 
 ## Define Probes
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes
-## Allow about five minutes for startup before liveness/readiness checks begin.
+## Optional startup check (Kubernetes 1.18+). Enable it to allow about five
+## minutes for startup before liveness/readiness checks begin.
 startupProbe:
-  enabled: true
+  enabled: false
   initialDelaySeconds: 0
   periodSeconds: 10
   timeoutSeconds: 5

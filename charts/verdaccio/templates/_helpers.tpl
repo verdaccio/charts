@@ -84,16 +84,14 @@ Usage:
 {{- end -}}
 
 {{/*
-Health probes shared by Deployment and StatefulSet. Keep fallback values here for
-upgrades using --reuse-values from releases that did not define probe defaults.
-mergeOverwrite preserves explicit false and zero values.
+Health probes shared by Deployment and StatefulSet. Fallback values cover --reuse-values
+upgrades from releases without probe defaults; one dict per line keeps Helm < 3.6 parsing.
 */}}
 {{- define "verdaccio.probes" -}}
-{{- $defaults := dict
-  "startupProbe" (dict "enabled" true "initialDelaySeconds" 0 "periodSeconds" 10 "timeoutSeconds" 5 "successThreshold" 1 "failureThreshold" 30)
-  "livenessProbe" (dict "enabled" true "initialDelaySeconds" 5 "periodSeconds" 10 "timeoutSeconds" 5 "successThreshold" 1 "failureThreshold" 6)
-  "readinessProbe" (dict "enabled" true "initialDelaySeconds" 5 "periodSeconds" 10 "timeoutSeconds" 5 "successThreshold" 1 "failureThreshold" 3)
-}}
+{{- $startup := dict "enabled" false "initialDelaySeconds" 0 "periodSeconds" 10 "timeoutSeconds" 5 "successThreshold" 1 "failureThreshold" 30 }}
+{{- $liveness := dict "enabled" true "initialDelaySeconds" 5 "periodSeconds" 10 "timeoutSeconds" 5 "successThreshold" 1 "failureThreshold" 6 }}
+{{- $readiness := dict "enabled" true "initialDelaySeconds" 5 "periodSeconds" 10 "timeoutSeconds" 5 "successThreshold" 1 "failureThreshold" 3 }}
+{{- $defaults := dict "startupProbe" $startup "livenessProbe" $liveness "readinessProbe" $readiness }}
 {{- range $name, $settings := $defaults }}
 {{- $probe := mergeOverwrite (deepCopy $settings) (index $.Values $name | default dict) }}
 {{- if $probe.enabled }}
