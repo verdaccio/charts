@@ -218,12 +218,17 @@ via `net.ipv6.conf.*.disable_ipv6` sysctls does not remove IPv6 socket support
 and does not require this setting. An IPv4-only cluster does not necessarily
 require it either.
 
-On IPv6-only clusters, Verdaccio must also listen on IPv6 so that Kubernetes
-can reach its health probes on port 4873. For images that default to an IPv4
-listen address, configure the backend separately:
+On IPv6-only clusters, Verdaccio itself must also listen on IPv6: the health
+probes target port 4873 on the Pod IP, not the sidecar. The default image
+(`verdaccio/verdaccio` at the chart `appVersion`) starts with
+`VERDACCIO_ADDRESS=0.0.0.0` and accepts IPv4 connections only, so the Pod never
+becomes Ready until the listen address is changed. Set it through
+`extraEnvVars`; the list replaces the chart default, so keep `VERDACCIO_PORT`:
 
 ```yaml
 extraEnvVars:
+  - name: VERDACCIO_PORT
+    value: "4873"
   - name: VERDACCIO_ADDRESS
     value: "[::]"
 ```
