@@ -172,7 +172,7 @@ and their default values.
 | `ingress.annotations`              | Ingress Annotations                                                              | `{}`                           |
 | `ingress.hosts`                    | List of Ingress Hosts                                                            | `[]`                           |
 | `ingress.paths`                    | List of Ingress Paths                                                            | `["/"]`                        |
-| `ingress.pathType`                 | Path type for `ingress.paths`, with or without hosts (k8s `>=1.18`)              | `Prefix`                       |
+| `ingress.pathType`                 | Default path type for paths and extraPaths (k8s `>=1.18`)                        | `Prefix`                       |
 | `ingress.extraPaths`               | List of extra Ingress Paths                                                      | `[]`                           |
 | `extraPorts`                       | List of extra ports to expose from the pods                                      | `[]`                           |
 | `extraManifests`                   | List of extra manifests to deploy within the chart                               | `[]`                           |
@@ -214,6 +214,11 @@ ingress:
   paths:
     - /*
 ```
+
+When `ingress.hosts` is configured, each entry in `ingress.extraPaths` can set its
+own `pathType`. An omitted, null, or empty value inherits `ingress.pathType`,
+falling back to `Prefix` if that setting is also unset or empty. An explicit
+per-entry value takes precedence. The same Kubernetes 1.18 requirement applies.
 
 ### Pinning an image by digest
 
