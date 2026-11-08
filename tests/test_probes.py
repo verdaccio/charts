@@ -77,17 +77,24 @@ class HealthProbes(unittest.TestCase):
                     for key, value in settings.items():
                         self.assertEqual(rendered[name][key], values[name][key])
 
-    def test_empty_or_missing_settings_keep_defaults(self):
-        # Null removes chart defaults, exercising fallback values for older releases.
+    def test_partial_override_keeps_other_defaults(self):
         for workload in WORKLOADS:
+            with self.subTest(workload=workload):
+                defaults = render_container(workload, {})
+                rendered = render_container(workload, {"livenessProbe": {"failureThreshold": 9}})
+                self.assertEqual(rendered["livenessProbe"]["failureThreshold"], 9)
+                self.assertEqual({**rendered["livenessProbe"], "failureThreshold": 6}, defaults["livenessProbe"])
+                self.assertEqual(rendered["readinessProbe"], defaults["readinessProbe"])
+
+    def test_empty_or_missing_settings_keep_defaults(self):
+        # Null removes chart defaults, exercising the helper fallback used by --reuse-values.
+        for workload in WORKLOADS:
+            defaults = render_container(workload, {})
             for settings in ({}, None):
                 with self.subTest(workload=workload, settings=settings):
                     rendered = render_container(workload, {name: settings for name in PROBES})
-                    self.assertNotIn("startupProbe", rendered)
-                    self.assertGreater(rendered["livenessProbe"]["failureThreshold"],
-                                       rendered["readinessProbe"]["failureThreshold"])
-                    for name in ("livenessProbe", "readinessProbe"):
-                        self.assertEqual(rendered[name]["timeoutSeconds"], 5)
+                    for name in PROBES:
+                        self.assertEqual(rendered.get(name), defaults.get(name))
 
 
 if __name__ == "__main__":

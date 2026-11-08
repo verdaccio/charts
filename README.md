@@ -258,12 +258,13 @@ Deployment and StatefulSet use the same HTTP checks on `/-/ping`:
   Kubernetes 1.18 or newer.
 
 Liveness and readiness checks allow five seconds for each response, run every ten
-seconds and start five seconds after the container starts (or after the startup check
-succeeds, when enabled). These defaults replace the previous one-second timeout and
-identical failure thresholds, which restarted Verdaccio under load
+seconds and start five seconds after the container starts; when the startup check is
+enabled they also wait for it to succeed. These defaults replace the previous one-second
+timeout and identical failure thresholds, which restarted Verdaccio under load
 ([#90](https://github.com/verdaccio/charts/issues/90),
 [#97](https://github.com/verdaccio/charts/issues/97)). Upgrading changes the pod
-template, so pods are recreated once.
+template, so pods are recreated once, and installs that override only some probe keys
+inherit the new values for the rest.
 
 Each probe supports `enabled`, `initialDelaySeconds`, `periodSeconds`, `timeoutSeconds`,
 `successThreshold`, and `failureThreshold`. Existing timing overrides remain supported,
