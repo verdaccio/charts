@@ -1,0 +1,106 @@
+name: Bug Report 🐛
+description: The chart renders or deploys something unexpected, I want to report a bug.
+title: "[Bug]: "
+labels: ["bug", "topic: kubernetes"]
+type: bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report! This tracker is for the Helm chart. Problems with Verdaccio itself (the registry, the web UI, plugins) belong in [verdaccio/verdaccio](https://github.com/verdaccio/verdaccio/issues/new/choose).
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Also tell us what you expected to happen. Paste text rather than screenshots when possible.
+      placeholder: Tell us what you see!
+    validations:
+      required: true
+  - type: input
+    id: chart-version
+    attributes:
+      label: Chart version
+      description: The `verdaccio` chart version, from `helm list` or the `Chart.yaml` you installed.
+      placeholder: ex. 7.3.0
+    validations:
+      required: true
+  - type: input
+    id: image
+    attributes:
+      label: Verdaccio image
+      description: The image the chart deploys, including `image.tag` or `image.digest` if you override the default.
+      placeholder: ex. verdaccio/verdaccio:7.0.2
+    validations:
+      required: true
+  - type: input
+    id: kubernetes
+    attributes:
+      label: Kubernetes version and distribution
+      description: Output of `kubectl version` and where the cluster runs (EKS, GKE, AKS, OpenShift, k3s, kind, ...).
+      placeholder: ex. v1.31.2, EKS with IPv6 pod networking
+    validations:
+      required: true
+  - type: input
+    id: helm
+    attributes:
+      label: Helm version
+      description: Output of `helm version --short`.
+      placeholder: ex. v3.19.0
+    validations:
+      required: true
+  - type: dropdown
+    id: workload
+    attributes:
+      label: Workload type
+      description: The `type` value of your release.
+      options:
+        - deployment (default)
+        - statefulset
+      default: 0
+    validations:
+      required: true
+  - type: checkboxes
+    id: features
+    attributes:
+      label: Chart features in use
+      description: Tick everything enabled in your values.
+      options:
+        - label: Ingress (ingress.enabled)
+        - label: Gateway API HTTPRoute (gatewayApi.enabled)
+        - label: nginx caching sidecar (cachingNginx.enabled)
+        - label: Persistence (persistence.enabled or persistence.existingClaim)
+        - label: Custom Verdaccio config (configMap or existingConfigMap)
+        - label: htpasswd from secrets.htpasswd or an existing secret
+        - label: Autoscaling or PodDisruptionBudget
+        - label: Dual-stack or IPv6-only cluster
+  - type: textarea
+    id: values
+    attributes:
+      label: Values
+      description: The values you pass to Helm (`helm get values <release>`). Remove passwords, tokens and htpasswd entries before pasting. This is formatted as YAML automatically, so no need for backticks.
+      render: yaml
+      placeholder: Paste your values here
+    validations:
+      required: true
+  - type: textarea
+    id: manifests
+    attributes:
+      label: Rendered manifests or cluster state
+      description: Relevant output of `helm template`, `kubectl describe pod` or `kubectl get events`. This is formatted automatically, so no need for backticks.
+      render: shell
+      placeholder: Paste output here
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log output
+      description: Logs from the `verdaccio` container, and from the nginx sidecar when enabled (`kubectl logs <pod> -c <container>`). Avoid sharing sensitive information.
+      render: shell
+      placeholder: Paste logs here
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Have I checked other issues?
+      description: Before submitting this issue, I have searched for existing issues that may be related to my problem.
+      options:
+        - label: I have searched existing issues
+          required: true
