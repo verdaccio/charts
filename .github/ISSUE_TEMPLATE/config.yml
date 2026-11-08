@@ -1,0 +1,20 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Chart documentation 📚
+    url: https://github.com/verdaccio/charts#readme
+    about: Values reference, installation, upgrade and migration notes
+  - name: Verdaccio on Kubernetes 📚
+    url: https://verdaccio.org/docs/kubernetes
+    about: Guides for running Verdaccio on Kubernetes
+  - name: Bug in Verdaccio itself 🐛
+    url: https://github.com/verdaccio/verdaccio/issues/new/choose
+    about: Problems with the registry, the web UI or plugins belong in the main repository
+  - name: Feature Request 🌟
+    url: https://github.com/verdaccio/charts/discussions/new?category=ideas
+    about: 🆕 Open a new feature request discussion 🙏
+  - name: Question 🤷🏻‍♂️
+    url: https://github.com/verdaccio/charts/discussions/new?category=q-a
+    about: 🆕 Open a new Q&A discussion 🙏
+  - name: Chat 🏘
+    url: https://discord.gg/7qWJxBf
+    about: Quick question? Try out Discord chat, you can get faster feedback
