@@ -5,6 +5,12 @@ the commit history by [git-cliff](https://git-cliff.org) on every release.
 The same entries are the notes of each
 [GitHub release](https://github.com/verdaccio/charts/releases).
 
+## [7.4.0](https://github.com/verdaccio/charts/releases/tag/verdaccio-7.4.0) - 2026-11-08
+
+### Bug fixes
+
+- **chart:** Configure startup liveness and readiness probes ([#217](https://github.com/verdaccio/charts/pull/217))
+
 ## [7.3.0](https://github.com/verdaccio/charts/releases/tag/verdaccio-7.3.0) - 2026-11-08
 
 ### Features
