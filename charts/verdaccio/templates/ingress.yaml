@@ -39,8 +39,8 @@ spec:
         paths:
         {{- range $ingressExtraPaths }}
           - path: {{ default "/" .path | quote }}
-            {{- if and .pathType (semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion) }}
-            pathType: {{ .pathType }}
+            {{- if semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion }}
+            pathType: {{ .pathType | default $.Values.ingress.pathType | default "Prefix" }}
             {{- end }}
             backend:
               {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
@@ -56,7 +56,7 @@ spec:
           {{- range $p := $paths }}
           - path: {{ $p }}
             {{- if semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion }}
-            pathType: Prefix
+            pathType: {{ $.Values.ingress.pathType | default "Prefix" }}
             {{- end }}
             backend:
               {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
@@ -75,7 +75,9 @@ spec:
         paths:
         {{- range $p := $paths }}
           - path: {{ $p }}
-            pathType: Prefix
+            {{- if semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion }}
+            pathType: {{ $.Values.ingress.pathType | default "Prefix" }}
+            {{- end }}
             backend:
               {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
               service:

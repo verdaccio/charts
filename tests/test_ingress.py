@@ -1,0 +1,118 @@
+"""Regressions for configurable ingress path types (issue #145)."""
+import unittest
+
+from helpers import render
+
+
+class IngressPathTypes(unittest.TestCase):
+    def test_configurable_path_types_with_and_without_hosts(self):
+        for version in ("1.13.0", "1.17.0", "1.18.0", "1.19.0"):
+            for hosts in ([], ["{{ .Release.Name }}.example.com", "other.example.com"]):
+                for path_type in ("Prefix", "Exact", "ImplementationSpecific"):
+                    with self.subTest(version=version, hosts=hosts, path_type=path_type):
+                        ingress = render({"ingress": {
+                            "enabled": True, "hosts": hosts,
+                            "paths": ["/*", "/registry"], "pathType": path_type,
+                        }}, extra_args=("--kube-version", version))[("Ingress", "verdaccio")]
+                        expected_api_version = (
+                            "extensions/v1beta1" if version == "1.13.0"
+                            else "networking.k8s.io/v1" if version == "1.19.0"
+                            else "networking.k8s.io/v1beta1"
+                        )
+                        self.assertEqual(ingress["apiVersion"], expected_api_version)
+                        rules = ingress["spec"]["rules"]
+                        self.assertEqual(len(rules), len(hosts) or 1)
+                        if hosts:
+                            self.assertEqual([rule["host"] for rule in rules],
+                                             ["verdaccio.example.com", "other.example.com"])
+                        else:
+                            self.assertNotIn("host", rules[0])
+                        expected_backend = (
+                            {"service": {"name": "verdaccio", "port": {"number": 4873}}}
+                            if version == "1.19.0"
+                            else {"serviceName": "verdaccio", "servicePort": 4873}
+                        )
+                        for rule in rules:
+                            paths = rule["http"]["paths"]
+                            self.assertEqual([path["path"] for path in paths], ["/*", "/registry"])
+                            for path in paths:
+                                self.assertEqual(path["backend"], expected_backend)
+                                if version in ("1.13.0", "1.17.0"):
+                                    self.assertNotIn("pathType", path)
+                                else:
+                                    self.assertEqual(path["pathType"], path_type)
+
+    def test_default_path_type_remains_prefix(self):
+        for hosts in ([], ["registry.example.com"]):
+            for override in ({}, {"pathType": None}, {"pathType": ""}):
+                with self.subTest(hosts=hosts, override=override):
+                    ingress = render({"ingress": {
+                        "enabled": True, "hosts": hosts, **override,
+                    }})[("Ingress", "verdaccio")]
+                    paths = ingress["spec"]["rules"][0]["http"]["paths"]
+                    self.assertEqual(paths[0]["path"], "/")
+                    self.assertEqual(paths[0]["pathType"], "Prefix")
+
+    def test_extra_paths_inherit_path_type_when_omitted_null_or_empty(self):
+        path_types = ("Prefix", "Exact", "ImplementationSpecific")
+        for version in ("1.18.0", "1.19.0"):
+            for override in ({}, {"pathType": None}, {"pathType": ""},
+                             *({"pathType": value} for value in path_types)):
+                with self.subTest(version=version, override=override):
+                    ingress = render({"ingress": {
+                        "enabled": True, "hosts": ["registry.example.com"], "paths": [],
+                        **override,
+                        "extraPaths": [
+                            {"path": "/omitted"},
+                            {"path": "/null", "pathType": None},
+                            {"path": "/empty", "pathType": ""},
+                            *({"path": "/" + value, "pathType": value} for value in path_types),
+                        ],
+                    }}, extra_args=("--kube-version", version))[("Ingress", "verdaccio")]
+                    paths = ingress["spec"]["rules"][0]["http"]["paths"]
+                    self.assertEqual([path["path"] for path in paths],
+                                     ["/omitted", "/null", "/empty"] + ["/" + value for value in path_types])
+                    inherited_type = override.get("pathType") or "Prefix"
+                    self.assertEqual([path.get("pathType") for path in paths],
+                                     [inherited_type] * 3 + list(path_types))
+                    expected_backend = (
+                        {"service": {"name": "verdaccio", "port": {"number": 4873}}}
+                        if version == "1.19.0"
+                        else {"serviceName": "verdaccio", "servicePort": 4873}
+                    )
+                    self.assertTrue(all(path["backend"] == expected_backend for path in paths))
+
+    def test_extra_paths_omit_path_type_before_kubernetes_1_18(self):
+        for version in ("1.13.0", "1.17.0"):
+            with self.subTest(version=version):
+                ingress = render({"ingress": {
+                    "enabled": True, "hosts": ["registry.example.com"], "pathType": "Exact",
+                    "extraPaths": [
+                        {"path": "/omitted"},
+                        {"path": "/null", "pathType": None},
+                        {"path": "/empty", "pathType": ""},
+                        {"path": "/explicit", "pathType": "ImplementationSpecific"},
+                    ],
+                }}, extra_args=("--kube-version", version))[("Ingress", "verdaccio")]
+                paths = ingress["spec"]["rules"][0]["http"]["paths"]
+                self.assertEqual([path["path"] for path in paths],
+                                 ["/omitted", "/null", "/empty", "/explicit", "/"])
+                for path in paths:
+                    self.assertNotIn("pathType", path)
+
+    def test_extra_paths_keep_their_own_path_type(self):
+        ingress = render({"ingress": {
+            "enabled": True, "hosts": ["registry.example.com"],
+            "pathType": "ImplementationSpecific", "paths": ["/*"],
+            "extraPaths": [{"path": "/health", "pathType": "Exact", "service": "health", "port": 80}],
+        }}, extra_args=("--kube-version", "1.19.0"))[("Ingress", "verdaccio")]
+        paths = ingress["spec"]["rules"][0]["http"]["paths"]
+        self.assertEqual(paths[0], {
+            "path": "/health", "pathType": "Exact",
+            "backend": {"service": {"name": "health", "port": {"number": 80}}},
+        })
+        self.assertEqual(paths[1]["pathType"], "ImplementationSpecific")
+
+
+if __name__ == "__main__":
+    unittest.main()
