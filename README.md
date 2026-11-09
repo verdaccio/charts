@@ -148,7 +148,7 @@ and their default values.
 | `service.type`                     | Type of service to create                                                        | `ClusterIP`                    |
 | `serviceAccount.create`            | Create service account                                                           | `false`                        |
 | `serviceAccount.name`              | Service account Name                                                             | none                           |
-| `extraEnvVars`                     | Define environment variables to be passed to the container                       | `[]`                           |
+| `extraEnvVars`                     | Additional environment variables (template expressions supported); `VERDACCIO_PORT=4873` is always supplied unless explicitly overridden here                       | `[]`                           |
 | `secretEnvVars`                    | Define sensitive environment variables to be passed to the container             | `{}`                           |
 | `existingSecret`                   | Existing secret containing environment variables to be passed to the container   | `""`                           |
 | `extraInitContainers`              | Define additional initContainers to be added to the deployment                   | `[]`                           |
@@ -219,6 +219,26 @@ When `ingress.hosts` is configured, each entry in `ingress.extraPaths` can set i
 own `pathType`. An omitted, null, or empty value inherits `ingress.pathType`,
 falling back to `Prefix` if that setting is also unset or empty. An explicit
 per-entry value takes precedence. The same Kubernetes 1.18 requirement applies.
+
+### Additional environment variables
+
+`extraEnvVars` supports Helm template expressions in values and `valueFrom`
+references, using the chart context:
+
+```yaml
+extraEnvVars:
+  - name: VERDACCIO_PUBLIC_URL
+    value: "https://{{ .Release.Name }}.example.com"
+  - name: TOKEN
+    valueFrom:
+      secretKeyRef:
+        name: "{{ .Release.Name }}-credentials"
+        key: token
+```
+
+The chart supplies `VERDACCIO_PORT=4873` even when `extraEnvVars` is empty or
+contains other variables. To override it, include a `VERDACCIO_PORT` entry with
+`value` or `valueFrom`; the chart preserves that entry without adding a duplicate.
 
 ### Pinning an image by digest
 

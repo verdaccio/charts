@@ -189,9 +189,8 @@ serviceAccount:
 #        key: secret_key
 #  - name: REGULAR_VAR
 #    value: ABC
-extraEnvVars:
-  - name: VERDACCIO_PORT
-    value: "4873"
+# Template expressions are supported. VERDACCIO_PORT defaults to 4873 unless overridden.
+extraEnvVars: []
 
 ## Secret Environment Variables
 ## Use this to pass sensitive key:values to the container via k8s secret
