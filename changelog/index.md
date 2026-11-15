@@ -5,6 +5,12 @@ the commit history by [git-cliff](https://git-cliff.org) on every release.
 The same entries are the notes of each
 [GitHub release](https://github.com/verdaccio/charts/releases).
 
+## [7.6.0](https://github.com/verdaccio/charts/releases/tag/verdaccio-7.6.0) - 2026-11-15
+
+### Verdaccio updates
+
+- Bump verdaccio to 7.1.1 (minor) ([#222](https://github.com/verdaccio/charts/pull/222))
+
 ## [7.5.0](https://github.com/verdaccio/charts/releases/tag/verdaccio-7.5.0) - 2026-11-08
 
 ### Features
