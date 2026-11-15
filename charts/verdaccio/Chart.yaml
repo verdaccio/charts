@@ -1,8 +1,8 @@
 apiVersion: v2
 description: A lightweight private node.js proxy registry
 name: verdaccio
-version: 7.5.0
-appVersion: 7.0.2
+version: 7.6.0
+appVersion: 7.1.1
 home: https://verdaccio.org
 icon: https://cdn.verdaccio.dev/logos/default.png
 sources:
